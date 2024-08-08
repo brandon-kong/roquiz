@@ -6,6 +6,8 @@ type Color = {
     active?: Color3;
 };
 
+type SizeToken = "xs" | "sm" | "md" | "lg" | "xl";
+
 type Configs = {
     colors: {
         [token: string]: Color;
@@ -15,9 +17,32 @@ type Configs = {
             [weight in FontWeight]: Font;
         };
     };
+    rounded: {
+        [size in SizeToken]: number;
+    };
+    textSize: {
+        [size in SizeToken]: number;
+    };
+    weights: {
+        [weight in FontWeight]: FontWeight;
+    };
 };
 
 export default {
+    textSize: {
+        xs: 14,
+        sm: 16,
+        md: 20,
+        lg: 24,
+        xl: 32,
+    },
+    rounded: {
+        xs: 2,
+        sm: 4,
+        md: 8,
+        lg: 16,
+        xl: 32,
+    },
     colors: {
         primary: {
             foreground: new Color3(1, 1, 1),
@@ -40,7 +65,12 @@ export default {
             active: Color3.fromRGB(200, 0, 0),
         },
     },
-
+    weights: {
+        Regular: "Regular",
+        Medium: "Medium",
+        SemiBold: "SemiBold",
+        Bold: "Bold",
+    },
     fonts: {
         Inter: {
             Regular: Font.fromName("Inter", Enum.FontWeight.Regular),

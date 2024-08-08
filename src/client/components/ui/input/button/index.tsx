@@ -1,6 +1,6 @@
 import React, { Children, useState } from "@rbxts/react";
 import ReactRoblox from "@rbxts/react-roblox";
-import { Padding, Typography, UICorner } from "@ui/library";
+import { Padding, SizeConstraint, Typography, UICorner } from "@ui/library";
 import { useSpring } from "@rbxts/rbx-react-spring";
 import motion from "@rbxts/react-motion";
 
@@ -46,8 +46,12 @@ function Button({ variant = "primary", onClick, text, size }: ButtonProps) {
                       Color3.fromRGB(0, 0, 0))
             }
         >
+            <SizeConstraint
+                max={new Vector2(1000, 56)}
+                min={new Vector2(56, 16)}
+            />
             <Padding left={8} right={8} top={4} bottom={4} />
-            <UICorner radius={8} />
+            <UICorner radius={configs.rounded.sm} />
 
             <Typography
                 size={new UDim2(1, 0, 1, 0)}
@@ -55,9 +59,9 @@ function Button({ variant = "primary", onClick, text, size }: ButtonProps) {
                     configs.colors[variant].foreground ??
                     Color3.fromRGB(255, 255, 255)
                 }
-                textSize="md"
+                textSize={configs.textSize.lg}
                 text={text ?? "Click me!"}
-                weight={"Medium"}
+                font={configs.fonts.Inter.SemiBold}
             />
         </textbutton>
     );

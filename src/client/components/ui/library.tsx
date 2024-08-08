@@ -13,11 +13,11 @@ interface PaddingProps {
 }
 
 interface UIListProps {
-    fillDirection: Enum.FillDirection;
+    fillDirection?: Enum.FillDirection;
     sortOrder?: Enum.SortOrder;
     verticalAlignment?: Enum.VerticalAlignment;
     horizontalAlignment?: Enum.HorizontalAlignment;
-    padding?: UDim;
+    padding?: UDimOrOffset;
 
     horizontalFlex?: Flex;
     verticalFlex?: Flex;
@@ -28,14 +28,23 @@ interface UICornerProps {
     radius: UDimOrOffset;
 }
 
-type TextSize = "xs" | "sm" | "md" | "lg" | "xl";
-
 interface TypographyProps {
+    font?: Font;
     weight?: FontWeight;
-    size: UDim2;
-    textSize?: TextSize;
+    size?: UDim2;
+    textSize?: number;
     text?: string;
     color?: Color3;
+}
+
+interface StrokeProps {
+    thickness?: number;
+    color?: Color3;
+    transparency?: number;
+}
+
+export function AspectRatio({ ratio }: { ratio: number }) {
+    return <uiaspectratioconstraint AspectRatio={ratio} />;
 }
 
 export function Padding(props: PaddingProps) {
@@ -63,6 +72,17 @@ export function Padding(props: PaddingProps) {
     );
 }
 
+export function Stroke(props: StrokeProps) {
+    return (
+        <uistroke
+            ApplyStrokeMode={Enum.ApplyStrokeMode.Border}
+            Color={props.color ?? Color3.fromRGB(0, 0, 0)}
+            Transparency={props.transparency ?? 0}
+            Thickness={props.thickness ?? 1}
+        />
+    );
+}
+
 export function UIList({
     fillDirection,
     sortOrder,
@@ -70,6 +90,7 @@ export function UIList({
     verticalFlex,
     horizontalAlignment,
     horizontalFlex,
+    padding,
 }: UIListProps) {
     return (
         <uilistlayout
@@ -83,7 +104,7 @@ export function UIList({
             }
             VerticalFlex={verticalFlex ?? Enum.UIFlexAlignment.None}
             HorizontalFlex={horizontalFlex ?? Enum.UIFlexAlignment.None}
-            Padding={new UDim(0, 0)}
+            Padding={typeIs(padding, "number") ? new UDim(0, padding) : padding}
         />
     );
 }
@@ -108,7 +129,12 @@ export function TextSizeConstraint({
     return <uitextsizeconstraint MinTextSize={min} MaxTextSize={max} />;
 }
 
+export function SizeConstraint({ min, max }: { min?: Vector2; max?: Vector2 }) {
+    return <uisizeconstraint MinSize={min} MaxSize={max} />;
+}
+
 export function Typography({
+    font,
     size,
     weight,
     text,
@@ -117,18 +143,14 @@ export function Typography({
 }: TypographyProps) {
     return (
         <textlabel
-            FontFace={configs.fonts.Inter[weight ?? "Regular"]}
+            FontFace={font ?? configs.fonts.Inter.Regular}
             TextScaled={true}
             Text={text ?? "Text"}
             TextColor3={color ?? Color3.fromRGB(0, 0, 0)}
             BackgroundTransparency={1}
-            Size={size}
+            Size={size ?? new UDim2(1, 0, 1, 0)}
         >
-            {textSize === "xs" && <TextSizeConstraint min={10} max={12} />}
-            {textSize === "sm" && <TextSizeConstraint min={14} max={16} />}
-            {textSize === "md" && <TextSizeConstraint min={18} max={20} />}
-            {textSize === "lg" && <TextSizeConstraint min={24} max={26} />}
-            {textSize === "xl" && <TextSizeConstraint min={32} max={34} />}
+            <TextSizeConstraint min={10} max={textSize} />
         </textlabel>
     );
 }
