@@ -5,16 +5,14 @@ import React from "@rbxts/react";
 declare const script: {
     Parent: Instance & {
         components: Folder & {
-            ui: Folder & {
-                stories: Folder;
-            };
+            stories: Folder;
         };
     };
 };
 
 const storybook: Storybook = {
     name: "Client UI",
-    storyRoots: [script.Parent.components.ui.stories],
+    storyRoots: [script.Parent.components.stories],
     react: React,
     reactRoblox: ReactRoblox,
 };

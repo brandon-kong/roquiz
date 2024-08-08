@@ -2,14 +2,17 @@ import React from "@rbxts/react";
 import ReactRoblox from "@rbxts/react-roblox";
 import { InferProps } from "@rbxts/react/src/prop-types";
 import { InferFusionProps } from "@rbxts/ui-labs";
-import Button from "@ui/button";
+import { TextInput } from "@ui/input/textinput";
 
 const controls = {
-    variant: "secondary",
+    text: "Text",
+    maxLength: 10,
+    clearOnFocus: false,
+    numbersOnly: false,
 };
 
-function ButtonStory(props: InferProps<typeof controls>) {
-    return <Button variant={props.variant} onClick={() => print("Clicked!")} />;
+function TextInputStory(props: InferProps<typeof controls>) {
+    return <TextInput {...props} />;
 }
 
 const story = {
@@ -17,7 +20,7 @@ const story = {
     reactRoblox: ReactRoblox,
     controls: controls,
     story: (props: InferFusionProps<typeof controls>) => {
-        return <ButtonStory {...props.controls} />;
+        return <TextInputStory {...props.controls} />;
     },
 };
 

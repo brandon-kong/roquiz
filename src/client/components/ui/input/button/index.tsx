@@ -41,13 +41,13 @@ function Button({ variant = "primary", onClick, text, size }: ButtonProps) {
             TextTransparency={1}
             BackgroundColor3={
                 hovered
-                ? configs.colors[variant].active
-                : (configs.colors[variant].background ??
-                  Color3.fromRGB(0, 0, 0))
+                    ? configs.colors[variant].active
+                    : (configs.colors[variant].background ??
+                      Color3.fromRGB(0, 0, 0))
             }
         >
             <Padding left={8} right={8} top={4} bottom={4} />
-            <UICorner radius={16} />
+            <UICorner radius={8} />
 
             <Typography
                 size={new UDim2(1, 0, 1, 0)}

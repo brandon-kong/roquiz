@@ -98,7 +98,13 @@ export function UICorner({ radius }: UICornerProps) {
     );
 }
 
-export function TextSizeConstraint({ min, max }: { min: number; max: number }) {
+export function TextSizeConstraint({
+    min,
+    max,
+}: {
+    min?: number;
+    max?: number;
+}) {
     return <uitextsizeconstraint MinTextSize={min} MaxTextSize={max} />;
 }
 
