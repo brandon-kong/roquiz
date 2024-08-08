@@ -5,12 +5,11 @@ import { InferFusionProps } from "@rbxts/ui-labs";
 import Button from "@ui/button";
 
 const controls = {
-    initialCount: 0,
+    variant: "secondary",
 };
 
 function ButtonStory(props: InferProps<typeof controls>) {
-    print(props);
-    return <Button initialCount={props.initialCount} />;
+    return <Button variant={props.variant} onClick={() => print("Clicked!")} />;
 }
 
 const story = {
@@ -18,8 +17,7 @@ const story = {
     reactRoblox: ReactRoblox,
     controls: controls,
     story: (props: InferFusionProps<typeof controls>) => {
-        print(props.controls.initialCount);
-        return <ButtonStory initialCount={props.controls.initialCount} />;
+        return <ButtonStory {...props.controls} />;
     },
 };
 

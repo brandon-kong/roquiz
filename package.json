@@ -27,8 +27,10 @@
   "dependencies": {
     "@rbxts/rbx-react-spring": "^1.2.4-ignore.6",
     "@rbxts/react": "^0.4.0",
+    "@rbxts/react-motion": "^1.5.3-t1",
     "@rbxts/react-roblox": "^0.4.0",
     "@rbxts/roact": "npm:@rbxts/react-ts",
+    "@rbxts/roact-spring": "^2.0.0",
     "@rbxts/ui-labs": "^2.2.0-ts.1"
   }
 }
