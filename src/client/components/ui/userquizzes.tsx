@@ -53,6 +53,8 @@ function UserQuizzes() {
                     color={Color3.fromRGB(242, 242, 242)}
                     patternTransparency={0.98}
                 >
+                    <UICorner radius={configs.rounded.md} />
+
                     <scrollingframe
                         BorderSizePixel={0}
                         BackgroundTransparency={1}
@@ -61,12 +63,12 @@ function UserQuizzes() {
                         CanvasSize={new UDim2(0, 0, 0, 1000)}
                         ScrollBarImageColor3={configs.colors.black.background}
                     >
-                        <UICorner radius={configs.rounded.md} />
                         <UIList
                             fillDirection={Enum.FillDirection.Horizontal}
                             padding={16}
                             verticalAlignment={Enum.VerticalAlignment.Top}
                             horizontalFlex={Enum.UIFlexAlignment.SpaceEvenly}
+                            horizontalAlignment={Enum.HorizontalAlignment.Left}
                             wraps={true}
                         />
                         <Padding left={12} right={12} top={12} bottom={12} />
