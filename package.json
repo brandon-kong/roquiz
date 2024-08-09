@@ -29,6 +29,7 @@
     "@rbxts/react": "^0.4.0",
     "@rbxts/react-motion": "^1.5.3-t1",
     "@rbxts/react-roblox": "^0.4.0",
+    "@rbxts/ripple": "^0.8.2",
     "@rbxts/roact": "npm:@rbxts/react-ts",
     "@rbxts/roact-spring": "^2.0.0",
     "@rbxts/ui-labs": "^2.2.0-ts.1"

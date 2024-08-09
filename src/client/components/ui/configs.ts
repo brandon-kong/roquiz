@@ -4,6 +4,7 @@ type Color = {
     foreground: Color3;
     background: Color3;
     active?: Color3;
+    accent?: Color3;
 };
 
 type SizeToken = "xs" | "sm" | "md" | "lg" | "xl";
@@ -48,21 +49,37 @@ export default {
             foreground: new Color3(1, 1, 1),
             background: Color3.fromRGB(0, 0, 0),
             active: Color3.fromRGB(30, 30, 30),
+            accent: Color3.fromRGB(227, 227, 227),
+        },
+        accent: {
+            foreground: Color3.fromRGB(255, 255, 255),
+            background: Color3.fromRGB(41, 112, 173),
+            active: Color3.fromRGB(33, 94, 145),
+            accent: Color3.fromRGB(138, 138, 138),
         },
         secondary: {
             foreground: Color3.fromRGB(0, 0, 0),
             background: Color3.fromRGB(230, 230, 230),
-            active: Color3.fromRGB(200, 200, 200),
+            active: Color3.fromRGB(219, 219, 219),
+            accent: Color3.fromRGB(0, 0, 0),
         },
         white: {
             foreground: Color3.fromRGB(0, 0, 0),
             background: Color3.fromRGB(255, 255, 255),
             active: Color3.fromRGB(230, 230, 230),
+            accent: Color3.fromRGB(138, 138, 138),
+        },
+        black: {
+            foreground: Color3.fromRGB(255, 255, 255),
+            background: Color3.fromRGB(0, 0, 0),
+            active: Color3.fromRGB(30, 30, 30),
+            accent: Color3.fromRGB(156, 156, 156),
         },
         destructive: {
             foreground: Color3.fromRGB(255, 255, 255),
             background: Color3.fromRGB(255, 0, 0),
             active: Color3.fromRGB(200, 0, 0),
+            accent: Color3.fromRGB(255, 255, 255),
         },
     },
     weights: {

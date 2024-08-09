@@ -1,6 +1,7 @@
 import type { Storybook } from "@rbxts/ui-labs";
 import ReactRoblox from "@rbxts/react-roblox";
 import React from "@rbxts/react";
+import Roact from "@rbxts/roact";
 
 declare const script: {
     Parent: Instance & {

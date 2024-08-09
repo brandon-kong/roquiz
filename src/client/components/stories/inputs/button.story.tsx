@@ -6,10 +6,17 @@ import Button from "@src/client/components/ui/input/button";
 
 const controls = {
     variant: "secondary",
+    disabled: false,
 };
 
 function ButtonStory(props: InferProps<typeof controls>) {
-    return <Button variant={props.variant} onClick={() => print("Clicked!")} />;
+    return (
+        <Button
+            variant={props.variant}
+            onClick={() => print("Clicked!")}
+            disabled={props.disabled}
+        />
+    );
 }
 
 const story = {

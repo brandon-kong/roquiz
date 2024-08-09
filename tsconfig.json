@@ -28,6 +28,7 @@
 			"@src/*": ["./*"],
 			"@ui/*": ["./client/components/ui/*"],
 			"@client/*": ["./client/*"],
+			"@shared/*": ["./shared/*"],
 		}
 	}
 }

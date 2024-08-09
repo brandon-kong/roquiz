@@ -35,6 +35,9 @@ interface TypographyProps {
     textSize?: number;
     text?: string;
     color?: Color3;
+    horizontalAlignment?: Enum.TextXAlignment;
+    verticalAlignment?: Enum.TextYAlignment;
+    truncate?: boolean;
 }
 
 interface StrokeProps {
@@ -91,6 +94,7 @@ export function UIList({
     horizontalAlignment,
     horizontalFlex,
     padding,
+    wraps,
 }: UIListProps) {
     return (
         <uilistlayout
@@ -105,6 +109,7 @@ export function UIList({
             VerticalFlex={verticalFlex ?? Enum.UIFlexAlignment.None}
             HorizontalFlex={horizontalFlex ?? Enum.UIFlexAlignment.None}
             Padding={typeIs(padding, "number") ? new UDim(0, padding) : padding}
+            Wraps={wraps ?? false}
         />
     );
 }
@@ -140,6 +145,9 @@ export function Typography({
     text,
     color,
     textSize,
+    horizontalAlignment,
+    verticalAlignment,
+    truncate,
 }: TypographyProps) {
     return (
         <textlabel
@@ -149,8 +157,39 @@ export function Typography({
             TextColor3={color ?? Color3.fromRGB(0, 0, 0)}
             BackgroundTransparency={1}
             Size={size ?? new UDim2(1, 0, 1, 0)}
+            TextXAlignment={horizontalAlignment ?? Enum.TextXAlignment.Center}
+            TextYAlignment={verticalAlignment ?? Enum.TextYAlignment.Center}
+            TextTruncate={
+                truncate ? Enum.TextTruncate.AtEnd : Enum.TextTruncate.None
+            }
         >
             <TextSizeConstraint min={10} max={textSize} />
         </textlabel>
+    );
+}
+
+interface UIGridProps {
+    cellSize?: UDim2;
+    cellPadding?: UDim2;
+    fillDirection?: Enum.FillDirection;
+    maxCells?: number;
+    horizontalAlignment?: Enum.HorizontalAlignment;
+    verticalAlignment?: Enum.VerticalAlignment;
+}
+
+export function UIGrid(props: UIGridProps) {
+    return (
+        <uigridlayout
+            CellSize={props.cellSize}
+            CellPadding={props.cellPadding ?? new UDim2(0, 0, 0, 0)}
+            FillDirection={props.fillDirection ?? Enum.FillDirection.Vertical}
+            FillDirectionMaxCells={props.maxCells ?? 4}
+            HorizontalAlignment={
+                props.horizontalAlignment ?? Enum.HorizontalAlignment.Left
+            }
+            VerticalAlignment={
+                props.verticalAlignment ?? Enum.VerticalAlignment.Top
+            }
+        />
     );
 }
