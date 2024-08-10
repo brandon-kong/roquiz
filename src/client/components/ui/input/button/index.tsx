@@ -6,7 +6,8 @@ import {
     Typography,
     UICorner,
 } from "@ui/library";
-import configs from "@ui/configs";
+import configs, { ColorToken } from "@ui/configs";
+import { config } from "@rbxts/ripple";
 
 type ButtonVariants = "primary" | "secondary" | "destructive" | "accent";
 
@@ -93,6 +94,7 @@ interface BackButtonProps {
 }
 
 export function BackButton(props: BackButtonProps) {
+    const [hovered, setHovered] = useState(false);
     return (
         <imagebutton
             Image={"rbxassetid://18867268824"}
@@ -108,6 +110,94 @@ export function BackButton(props: BackButtonProps) {
             }}
         >
             <AspectRatio ratio={1} />
+        </imagebutton>
+    );
+}
+
+interface ToggleButtonProps {
+    visible?: boolean;
+    size?: UDim2;
+    onClick?: () => void;
+    toggled?: boolean;
+    color?: ColorToken;
+
+    active?: boolean;
+    activeColor?: ColorToken;
+
+    onToggle?: (toggled: boolean) => void;
+}
+
+export function ToggleButton(props: ToggleButtonProps) {
+    const [hovered, setHovered] = useState(false);
+
+    return (
+        <imagebutton
+            Visible={props.visible ?? false}
+            AutoButtonColor={false}
+            Image={configs.gameShapes.circle}
+            BackgroundTransparency={1}
+            Size={new UDim2(0.6, 0, 0.6, 0)}
+            Position={new UDim2(0.5, 0, 0.5, 0)}
+            AnchorPoint={new Vector2(0.5, 0.5)}
+            Event={{
+                MouseEnter: () => {
+                    setHovered(true);
+                },
+
+                MouseLeave: () => {
+                    setHovered(false);
+                },
+
+                Activated: () => {
+                    if (props.onToggle) {
+                        props.onToggle(!props.active);
+                    }
+
+                    if (props.onClick) {
+                        props.onClick();
+                    }
+                },
+            }}
+        >
+            <AspectRatio ratio={1} />
+            <Padding
+                left={new UDim(0.075, 0)}
+                right={new UDim(0.075, 0)}
+                top={new UDim(0.075, 0)}
+                bottom={new UDim(0.075, 0)}
+            />
+            <imagelabel
+                Image={configs.gameShapes.circle}
+                BackgroundTransparency={1}
+                Size={new UDim2(1, 0, 1, 0)}
+                Position={new UDim2(0.5, 0, 0.5, 0)}
+                AnchorPoint={new Vector2(0.5, 0.5)}
+                ImageColor3={
+                    props.active
+                        ? props.activeColor
+                            ? configs.colors[props.activeColor].background
+                            : Color3.fromRGB(92, 182, 47)
+                        : props.color
+                          ? configs.colors[props.color].background
+                          : configs.colors.white.background
+                }
+            >
+                <imagelabel
+                    Image={"rbxassetid://9267719574"}
+                    BackgroundTransparency={1}
+                    Size={new UDim2(0.7, 0, 0.7, 0)}
+                    Position={new UDim2(0.5, 0, 0.5, 0)}
+                    AnchorPoint={new Vector2(0.5, 0.5)}
+                    ImageColor3={
+                        props.color
+                            ? configs.colors[props.color].foreground
+                            : configs.colors.white.background
+                    }
+                    Visible={props.active ?? hovered}
+                >
+                    <AspectRatio ratio={1} />
+                </imagelabel>
+            </imagelabel>
         </imagebutton>
     );
 }

@@ -11,6 +11,7 @@ import {
 } from "@ui/library";
 
 import configs, { ColorToken } from "@ui/configs";
+import { ToggleButton } from "../button";
 
 interface TextInputProps {
     backgroundTransparency?: number;
@@ -165,12 +166,18 @@ function stripText(text: string) {
     return newText.gsub("%s", "")[0].gsub("%D", "");
 }
 
-interface QuestionAnswerCardProps {
+function textIsValid(text: string) {
+    return text.size() > 0 && stripText(text).size() > 0;
+}
+
+export interface QuestionAnswerCardProps {
     shape?: string;
     size?: UDim2;
     text?: string;
     setText?: (text: string) => void;
     color?: ColorToken;
+
+    shapeScale?: number;
 
     onAnswerSelectCorrect?: () => void;
     onAnswerDeselectCorrect?: () => void;
@@ -180,7 +187,7 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
     const [text, setText] = useState<string>(props.text ?? "");
     const [correct, setCorrect] = useState<boolean>(false);
 
-    const validText = text.size() > 0 && stripText(text).size() > 0;
+    const validText = textIsValid(text);
 
     return (
         <canvasgroup
@@ -221,6 +228,7 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
                         Position={new UDim2(0.5, 0, 0.5, 0)}
                         AnchorPoint={new Vector2(0.5, 0.5)}
                     >
+                        <uiscale Scale={props.shapeScale ?? 1} />
                         <AspectRatio ratio={1} />
                     </imagelabel>
                 </frame>
@@ -244,6 +252,10 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
                         if (props.setText) {
                             props.setText(text);
                         }
+
+                        if (textIsValid(text) === false) {
+                            setCorrect(false);
+                        }
                     }}
                 />
 
@@ -252,16 +264,24 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
                     BackgroundTransparency={1}
                     Size={new UDim2(0.15, 0, 1, 0)}
                 >
-                    <UICorner radius={configs.rounded.md} />
-                    <imagelabel
-                        Image={"rbxassetid://9266744542"}
-                        BackgroundTransparency={1}
-                        Size={new UDim2(0.6, 0, 0.6, 0)}
-                        Position={new UDim2(0.5, 0, 0.5, 0)}
-                        AnchorPoint={new Vector2(0.5, 0.5)}
-                    >
-                        <AspectRatio ratio={1} />
-                    </imagelabel>
+                    <ToggleButton
+                        color={props.color}
+                        visible={validText}
+                        active={correct}
+                        onToggle={(active) => {
+                            if (active) {
+                                setCorrect(true);
+                                if (props.onAnswerSelectCorrect) {
+                                    props.onAnswerSelectCorrect();
+                                }
+                            } else {
+                                setCorrect(false);
+                                if (props.onAnswerDeselectCorrect) {
+                                    props.onAnswerDeselectCorrect();
+                                }
+                            }
+                        }}
+                    />
                 </frame>
             </frame>
         </canvasgroup>

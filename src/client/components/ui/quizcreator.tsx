@@ -8,15 +8,14 @@ import {
     UIList,
 } from "./library";
 import configs, { ColorToken } from "./configs";
-import { QuestionAnswerCard, TextInput } from "./input/textinput";
+import {
+    QuestionAnswerCard,
+    QuestionAnswerCardProps,
+    TextInput,
+} from "./input/textinput";
 import Button from "./input/button";
 
-type SelectionButton = {
-    color: ColorToken;
-    shape: string;
-};
-
-const selectButtons: SelectionButton[] = [
+const selectButtons: QuestionAnswerCardProps[] = [
     {
         color: "gameRed",
         shape: configs.gameShapes.circle,
@@ -32,6 +31,7 @@ const selectButtons: SelectionButton[] = [
     {
         color: "gameGreen",
         shape: configs.gameShapes.square,
+        shapeScale: 0.8,
     },
 ];
 
