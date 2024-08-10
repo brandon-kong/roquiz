@@ -10,6 +10,7 @@ import {
 } from "./library";
 import configs, { ColorToken } from "./configs";
 import {
+    Dropdown,
     QuestionAnswerCard,
     QuestionAnswerCardProps,
     TextInput,
@@ -17,6 +18,8 @@ import {
 import Button, { IconButton } from "./input/button";
 import { useSpring } from "../hooks/useSpring";
 import { controls } from "../stories/inputs/button.story";
+import ModalBackdrop from "./modal-backdrop";
+import Separator from "./separator";
 
 const selectButtons: QuestionAnswerCardProps[] = [
     {
@@ -38,11 +41,41 @@ const selectButtons: QuestionAnswerCardProps[] = [
     },
 ];
 
+interface ControlDropdownProps {
+    title: string;
+    options: string[];
+}
+
+function ControlDropdown(props: ControlDropdownProps) {
+    return (
+        <frame
+            BackgroundTransparency={1}
+            AutomaticSize={Enum.AutomaticSize.Y}
+            Size={new UDim2(1, 0, 0, 0)}
+        >
+            <UIList
+                fillDirection={Enum.FillDirection.Vertical}
+                verticalAlignment={Enum.VerticalAlignment.Center}
+                padding={new UDim(0, 4)}
+            />
+            <Typography
+                text={props.title}
+                font={configs.fonts.Inter.SemiBold}
+                textSize={configs.textSize.lg}
+                color={configs.colors.white.foreground}
+                horizontalAlignment={Enum.TextXAlignment.Left}
+                size={new UDim2(1, 0, 0, 40)}
+            />
+            <Dropdown options={props.options} />
+        </frame>
+    );
+}
+
 function QuizCreator() {
     const [controlsExpanded, setControlsExpanded] = useState(false);
 
     const [controlsPosition, setControlsPosition] = useBinding(
-        new UDim2(0.8, 0, 1, 0),
+        new UDim2(1, 0, 0, 0),
     );
     const controlsExpandedBinding = useSpring(
         controlsPosition,
@@ -51,7 +84,7 @@ function QuizCreator() {
 
     useEffect(() => {
         if (controlsExpanded) {
-            setControlsPosition(new UDim2(0.75, 0, 0, 0));
+            setControlsPosition(new UDim2(0.7, 0, 0, 0));
         } else {
             setControlsPosition(new UDim2(1, 0, 0, 0));
         }
@@ -161,19 +194,10 @@ function QuizCreator() {
                 </frame>
             </frame>
 
-            <imagebutton
-                Visible={controlsExpanded}
-                Active={controlsExpanded}
-                AutoButtonColor={false}
-                Image={undefined}
-                BackgroundTransparency={controlsExpanded ? 0.8 : 1}
-                BorderSizePixel={0}
-                BackgroundColor3={configs.colors.black.background}
-                Size={new UDim2(1, 0, 1, 0)}
-                Event={{
-                    Activated: () => {
-                        setControlsExpanded(!controlsExpanded);
-                    },
+            <ModalBackdrop
+                visible={controlsExpanded}
+                onClick={() => {
+                    setControlsExpanded(false);
                 }}
             />
 
@@ -184,19 +208,44 @@ function QuizCreator() {
                     BorderSizePixel={0}
                     key={"quiz-creator-question-controls"}
                     BackgroundColor3={configs.colors.white.background}
-                    Size={new UDim2(0.25, 0, 1, 0)}
+                    Size={new UDim2(0.3, 0, 1, 0)}
                     Position={controlsExpandedBinding}
                     AnchorPoint={new Vector2(0, 0)}
                 >
                     <frame
                         BackgroundTransparency={1}
                         Size={new UDim2(1, 0, 1, 0)}
-                    ></frame>
+                    >
+                        <UIList
+                            fillDirection={Enum.FillDirection.Vertical}
+                            verticalAlignment={Enum.VerticalAlignment.Top}
+                            padding={new UDim(0, 16)}
+                        />
+                        <Padding
+                            left={new UDim(0.05, 0)}
+                            right={new UDim(0.05, 0)}
+                            top={8}
+                            bottom={8}
+                        />
+                        <ControlDropdown
+                            title={"Question Type"}
+                            options={[
+                                "Multiple Choice",
+                                "True/False",
+                                "Short Answer",
+                            ]}
+                        />
+
+                        <ControlDropdown
+                            title={"Difficulty"}
+                            options={["Easy", "Medium", "Hard"]}
+                        />
+                    </frame>
                     <imagebutton
                         AutoButtonColor={false}
                         BackgroundColor3={configs.colors.white.background}
                         AnchorPoint={new Vector2(0, 0.5)}
-                        Size={new UDim2(0, 50, 0.15, 0)}
+                        Size={new UDim2(0, 40, 0.15, 0)}
                         Position={new UDim2(0, -50, 0.4, 0)}
                         Event={{
                             Activated: () => {
@@ -205,12 +254,7 @@ function QuizCreator() {
                         }}
                     >
                         <UICorner radius={configs.rounded.md} />
-                        <frame
-                            BorderSizePixel={0}
-                            BackgroundColor3={configs.colors.white.background}
-                            Size={new UDim2(0.5, 0, 1, 0)}
-                            Position={new UDim2(0.5, 0, 0, 0)}
-                        />
+
                         <imagelabel
                             BackgroundTransparency={1}
                             Size={new UDim2(0.5, 0, 1, 0)}

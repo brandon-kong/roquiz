@@ -82,7 +82,7 @@ const configs = {
             foreground: Color3.fromRGB(0, 0, 0),
             background: Color3.fromRGB(255, 255, 255),
             active: Color3.fromRGB(230, 230, 230),
-            accent: Color3.fromRGB(138, 138, 138),
+            accent: Color3.fromRGB(196, 196, 196),
         },
         black: {
             foreground: Color3.fromRGB(255, 255, 255),
@@ -143,6 +143,7 @@ const configs = {
     icons: {
         plus: "rbxassetid://9208725269",
         chevronRight: "rbxassetid://9225412285",
+        chevronDown: "rbxassetid://9209184896",
     },
     fonts: {
         Inter: {

@@ -322,3 +322,143 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
         </canvasgroup>
     );
 }
+
+interface DropdownProps {
+    options: string[];
+    selected?: string;
+    onSelect?: (option: string) => void;
+    size?: UDim2;
+}
+
+function DropdownItem(props: { text: string; onSelect: () => void }) {
+    const [hovered, setHovered] = useState(false);
+
+    const [backgroundColor, setBackgroundColor] = useBinding(
+        configs.colors.white.background,
+    );
+
+    const backgroundColorBinding = useSpring(
+        backgroundColor,
+        configs.spring.default,
+    );
+
+    useEffect(() => {
+        if (hovered) {
+            setBackgroundColor(configs.colors.white.active);
+        } else {
+            setBackgroundColor(configs.colors.white.background);
+        }
+    }, [hovered]);
+
+    return (
+        <textbutton
+            AutoButtonColor={false}
+            FontFace={configs.fonts.Inter.SemiBold}
+            TextScaled={true}
+            BorderSizePixel={0}
+            BackgroundColor3={backgroundColorBinding}
+            Text={props.text}
+            Size={new UDim2(1, 0, 0, 40)}
+            BackgroundTransparency={0}
+            Event={{
+                Activated: () => {
+                    props.onSelect();
+                },
+                MouseEnter: () => {
+                    setHovered(true);
+                },
+                MouseLeave: () => {
+                    setHovered(false);
+                },
+            }}
+        >
+            <Padding left={8} right={8} top={8} bottom={8} />
+            <UICorner radius={configs.rounded.sm} />
+        </textbutton>
+    );
+}
+
+export function Dropdown(props: DropdownProps) {
+    const [selected, setSelected] = useState<string>(
+        props.selected ?? props.options[0],
+    );
+    const [expanded, setExpanded] = useState<boolean>(false);
+
+    return (
+        <imagebutton
+            AutomaticSize={Enum.AutomaticSize.Y}
+            AutoButtonColor={false}
+            BackgroundColor3={configs.colors.white.background}
+            Size={props.size ?? new UDim2(1, 0, 0, 0)}
+            Event={{
+                Activated: () => {
+                    setExpanded(!expanded);
+                },
+            }}
+        >
+            <UIList
+                fillDirection={Enum.FillDirection.Vertical}
+                verticalAlignment={Enum.VerticalAlignment.Top}
+            />
+
+            <Stroke
+                thickness={2}
+                color={configs.colors.black.background}
+                transparency={0.9}
+            />
+            <UICorner radius={configs.rounded.sm} />
+            <Padding left={8} right={8} top={8} bottom={8} />
+
+            <frame BackgroundTransparency={1} Size={new UDim2(1, 0, 0, 40)}>
+                <imagelabel
+                    BackgroundTransparency={1}
+                    Size={new UDim2(0.5, 0, 0.5, 0)}
+                    Image={configs.icons.chevronDown}
+                    ImageColor3={configs.colors.white.foreground}
+                    ImageTransparency={0.5}
+                    AnchorPoint={new Vector2(1, 0.5)}
+                    Position={new UDim2(1, 0, 0.5, 0)}
+                    Rotation={expanded ? 180 : 0}
+                >
+                    <AspectRatio ratio={1} />
+                </imagelabel>
+
+                <Typography
+                    text={selected}
+                    size={new UDim2(0.8, 0, 1, 0)}
+                    color={configs.colors.black.accent}
+                    textSize={configs.textSize.lg}
+                    font={configs.fonts.Inter.SemiBold}
+                    horizontalAlignment={Enum.TextXAlignment.Left}
+                />
+            </frame>
+
+            <frame
+                BackgroundTransparency={1}
+                Size={new UDim2(1, 0, 0, 0)}
+                Visible={expanded}
+                AutomaticSize={Enum.AutomaticSize.Y}
+            >
+                <UIList
+                    fillDirection={Enum.FillDirection.Vertical}
+                    verticalAlignment={Enum.VerticalAlignment.Top}
+                />
+
+                {props.options.map((option) => {
+                    return (
+                        <DropdownItem
+                            text={option}
+                            onSelect={() => {
+                                setSelected(option);
+                                setExpanded(false);
+                                if (props.onSelect) {
+                                    props.onSelect(option);
+                                }
+                            }}
+                        />
+                    );
+                })}
+            </frame>
+        </imagebutton>
+    );
+}
