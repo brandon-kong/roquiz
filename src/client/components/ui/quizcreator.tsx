@@ -219,13 +219,36 @@ function QuizCreator() {
                         <UIList
                             fillDirection={Enum.FillDirection.Vertical}
                             verticalAlignment={Enum.VerticalAlignment.Top}
-                            padding={new UDim(0, 16)}
+                            padding={new UDim(0, 8)}
                         />
                         <Padding
                             left={new UDim(0.05, 0)}
                             right={new UDim(0.05, 0)}
                             top={8}
                             bottom={8}
+                        />
+                        <Button
+                            variant={"destructive"}
+                            text={"Delete"}
+                            size={new UDim2(1, 0, 0, 40)}
+                        />
+                        <Button
+                            variant={"secondary"}
+                            text={"Duplicate"}
+                            size={new UDim2(1, 0, 0, 40)}
+                        />
+
+                        <frame
+                            BackgroundTransparency={1}
+                            Size={new UDim2(1, 0, 0, 8)}
+                        />
+                        <Separator
+                            color={configs.colors.secondary.background}
+                        />
+
+                        <frame
+                            BackgroundTransparency={1}
+                            Size={new UDim2(1, 0, 0, 8)}
                         />
                         <ControlDropdown
                             title={"Question Type"}

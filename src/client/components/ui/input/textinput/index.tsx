@@ -409,7 +409,7 @@ export function Dropdown(props: DropdownProps) {
             <UICorner radius={configs.rounded.sm} />
             <Padding left={8} right={8} top={8} bottom={8} />
 
-            <frame BackgroundTransparency={1} Size={new UDim2(1, 0, 0, 40)}>
+            <frame BackgroundTransparency={1} Size={new UDim2(1, 0, 0, 32)}>
                 <imagelabel
                     BackgroundTransparency={1}
                     Size={new UDim2(0.5, 0, 0.5, 0)}
