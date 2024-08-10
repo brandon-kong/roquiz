@@ -43,7 +43,7 @@ interface TypographyProps {
 interface StrokeProps {
     thickness?: number;
     color?: Color3;
-    transparency?: number;
+    transparency?: number | React.Binding<number>;
 }
 
 export function AspectRatio({ ratio }: { ratio: number }) {

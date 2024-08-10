@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "@rbxts/react";
+const ReplicatedStorage = game.GetService("ReplicatedStorage");
+
+import React, { useBinding, useEffect, useState } from "@rbxts/react";
 import {
     AspectRatio,
     Padding,
@@ -7,9 +9,11 @@ import {
     UICorner,
 } from "@ui/library";
 import configs, { ColorToken } from "@ui/configs";
-import { config } from "@rbxts/ripple";
+import { useSpring } from "@src/client/components/hooks/useSpring";
 
-type ButtonVariants = "primary" | "secondary" | "destructive" | "accent";
+import Roact from "@rbxts/roact";
+
+type ButtonVariants = ColorToken;
 
 interface ButtonProps {
     size?: UDim2;
@@ -31,19 +35,38 @@ export function Button({
     }
 
     const [hovered, setHovered] = useState(false);
-    const canvasRef = React.createRef<CanvasGroup>();
+
+    const [color, setColor] = useBinding(configs.colors[variant].background);
+    const [groupTransparency, setGroupTransparency] = useBinding(0);
+
+    const groupTransparencyBinding = useSpring(
+        groupTransparency,
+        configs.spring.default,
+    );
+
+    const colorBinding = useSpring(color, configs.spring.default);
+
+    useEffect(() => {
+        if (disabled) {
+            setGroupTransparency(0.5);
+        } else {
+            setGroupTransparency(0);
+        }
+
+        if (hovered) {
+            setColor(configs.colors[variant].active);
+        } else {
+            setColor(configs.colors[variant].background);
+        }
+    }, [disabled, hovered]);
 
     return (
         <canvasgroup
-            GroupTransparency={disabled ? 0.5 : 0}
+            GroupTransparency={groupTransparencyBinding}
             AnchorPoint={new Vector2(0, 0)}
             Size={size ?? new UDim2(0, 100, 0, 50)}
             Position={new UDim2(0, 0, 0, 0)}
-            BackgroundColor3={
-                hovered
-                    ? configs.colors[variant].active
-                    : configs.colors[variant].background
-            }
+            BackgroundColor3={colorBinding}
         >
             <UICorner radius={configs.rounded.sm} />
             <SizeConstraint
@@ -193,7 +216,7 @@ export function ToggleButton(props: ToggleButtonProps) {
                             ? configs.colors[props.color].foreground
                             : configs.colors.white.background
                     }
-                    Visible={props.active ?? hovered}
+                    Visible={props.active || hovered}
                 >
                     <AspectRatio ratio={1} />
                 </imagelabel>
@@ -201,4 +224,43 @@ export function ToggleButton(props: ToggleButtonProps) {
         </imagebutton>
     );
 }
+
+interface IconButtonProps extends ButtonProps {
+    icon?: string;
+}
+
+export function IconButton(props: IconButtonProps) {
+    return (
+        <imagebutton
+            Image={configs.gameShapes.circle}
+            ImageColor3={configs.colors[props.variant ?? "primary"].background}
+            BackgroundTransparency={1}
+            Size={props.size ?? new UDim2(0, 50, 0, 50)}
+            Event={{
+                Activated: () => {
+                    if (props.onClick) {
+                        props.onClick();
+                    }
+                },
+            }}
+        >
+            <AspectRatio ratio={1} />
+            <Padding left={8} right={8} top={8} bottom={8} />
+
+            <imagelabel
+                Image={props.icon ?? configs.gameShapes.square}
+                BackgroundTransparency={1}
+                Size={new UDim2(0.7, 0, 0.7, 0)}
+                Position={new UDim2(0.5, 0, 0.5, 0)}
+                AnchorPoint={new Vector2(0.5, 0.5)}
+                ImageColor3={
+                    configs.colors[props.variant ?? "primary"].foreground
+                }
+            >
+                <AspectRatio ratio={1} />
+            </imagelabel>
+        </imagebutton>
+    );
+}
+
 export default Button;

@@ -13,7 +13,7 @@ import {
     QuestionAnswerCardProps,
     TextInput,
 } from "./input/textinput";
-import Button from "./input/button";
+import Button, { IconButton } from "./input/button";
 
 const selectButtons: QuestionAnswerCardProps[] = [
     {
@@ -98,6 +98,7 @@ function QuizCreator() {
                         max={new Vector2(400, 400)}
                         min={new Vector2(100, 100)}
                     />
+                    <IconButton variant={"gameGreen"} />
                 </imagelabel>
 
                 <frame

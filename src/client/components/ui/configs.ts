@@ -1,3 +1,5 @@
+import { SpringOptions } from "@rbxts/ripple";
+
 export type FontWeight = "Regular" | "Medium" | "SemiBold" | "Bold";
 
 type Color = {
@@ -27,9 +29,22 @@ type Configs = {
     weights: {
         [weight in FontWeight]: FontWeight;
     };
+
+    spring: {
+        [key: string]: SpringOptions;
+    };
+    gameShapes: {
+        [shape: string]: string;
+    };
 };
 
 const configs = {
+    spring: {
+        default: {
+            damping: 1,
+            frequency: 0.25,
+        },
+    },
     textSize: {
         xs: 14,
         sm: 16,
@@ -48,7 +63,7 @@ const configs = {
         primary: {
             foreground: new Color3(1, 1, 1),
             background: Color3.fromRGB(0, 0, 0),
-            active: Color3.fromRGB(140, 87, 87),
+            active: Color3.fromRGB(30, 30, 30),
             accent: Color3.fromRGB(227, 227, 227),
         },
         accent: {

@@ -1,4 +1,4 @@
-import React, { Children, useState } from "@rbxts/react";
+import React, { Children, useBinding, useEffect, useState } from "@rbxts/react";
 import {
     AspectRatio,
     Padding,
@@ -12,6 +12,7 @@ import {
 
 import configs, { ColorToken } from "@ui/configs";
 import { ToggleButton } from "../button";
+import { useSpring } from "@src/client/components/hooks/useSpring";
 
 interface TextInputProps {
     backgroundTransparency?: number;
@@ -88,11 +89,32 @@ export function CodeInput(props: Omit<TextInputProps, "numbersOnly">) {
     const [focused, setFocused] = useState(false);
     const maxLength = props.maxLength ?? 100;
 
+    const [strokeTransparency, setStrokeTransparency] = useBinding(0.9);
+    const [transparency, setTransparency] = useBinding(0);
+
+    const strokeBinding = useSpring(strokeTransparency, configs.spring.default);
+    const transparencyBinding = useSpring(transparency, configs.spring.default);
+
+    useEffect(() => {
+        if (focused) {
+            setStrokeTransparency(0);
+        } else {
+            setStrokeTransparency(0.9);
+        }
+
+        if (props.disabled) {
+            setTransparency(0.5);
+            setStrokeTransparency(0.9);
+        } else {
+            setTransparency(0);
+        }
+    }, [focused, props.disabled]);
+
     return (
         <canvasgroup
             BackgroundColor3={configs.colors["white"].background}
             BorderSizePixel={0}
-            GroupTransparency={props.disabled ? 0.5 : 0}
+            GroupTransparency={transparencyBinding}
             AnchorPoint={new Vector2(0, 0)}
             Size={
                 props.size
@@ -113,7 +135,7 @@ export function CodeInput(props: Omit<TextInputProps, "numbersOnly">) {
             <UICorner radius={configs.rounded.sm} />
             <Stroke
                 thickness={2}
-                transparency={focused ? 0 : 0.9}
+                transparency={strokeBinding}
                 color={Color3.fromRGB(0, 0, 0)}
             />
 
@@ -189,15 +211,28 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
 
     const validText = textIsValid(text);
 
+    const [backgroundColor, setBackgroundColor] = useBinding(
+        configs.colors[props.color ?? "gameGreen"].background,
+    );
+
+    const backgroundColorBinding = useSpring(
+        backgroundColor,
+        configs.spring.default,
+    );
+
+    useEffect(() => {
+        if (validText) {
+            setBackgroundColor(
+                configs.colors[props.color ?? "gameGreen"].background,
+            );
+        } else {
+            setBackgroundColor(configs.colors["white"].background);
+        }
+    }, [validText]);
+
     return (
         <canvasgroup
-            BackgroundColor3={
-                validText
-                    ? props.color
-                        ? configs.colors[props.color].background
-                        : configs.colors["gameGreen"].background
-                    : configs.colors["white"].background
-            }
+            BackgroundColor3={backgroundColorBinding}
             Size={props.size ?? new UDim2(1, 0, 1, 0)}
         >
             <UICorner radius={configs.rounded.md} />

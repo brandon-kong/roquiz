@@ -5,10 +5,13 @@ import type { MotionGoal, SpringOptions } from "@rbxts/ripple";
 import { createMotion, Motion } from "@rbxts/ripple";
 import { useMotion } from "./useMotion";
 
-function getBindingValue<T extends MotionGoal>(goal: T | Binding<T>) {
-    return typeIs(goal, "userdata")
-        ? (goal as T)
-        : (goal as Binding<T>).getValue();
+function getBindingValue<T extends MotionGoal>(goal: T | Binding<T>): T {
+    // check if T is a binding type
+    if (typeIs(goal, "table") && (goal as Binding<T>).getValue) {
+        return (goal as Binding<T>).getValue();
+    } else {
+        return goal as T;
+    }
 }
 
 export function useSpring<T extends MotionGoal>(
@@ -27,8 +30,6 @@ export function useSpring(
         const heartbeat = RunService.Heartbeat.Connect(() => {
             const currentValue = getBindingValue(goal);
 
-            print(currentValue === previousValue.current);
-
             if (currentValue !== previousValue.current) {
                 previousValue.current = currentValue;
                 motion.spring(currentValue, options);
@@ -39,4 +40,25 @@ export function useSpring(
     }, [goal, options, motion]);
 
     return binding;
+}
+
+// function useSprings should take a table of goals and return an object of bindings
+// it should be properly typed to ensure that the keys of the object are preserved
+export function useSprings<T extends { [key: string]: MotionGoal }>(
+    goals: T,
+    options?: SpringOptions,
+): { [K in keyof T]: Binding<T[K]> } {
+    const bindings = useMemo(() => {
+        const result = {} as { [K in keyof T]: Binding<T[K]> };
+
+        for (const [key, goal] of pairs(goals)) {
+            result[key as keyof T] = useSpring(goal, options) as Binding<
+                T[keyof T]
+            >;
+        }
+
+        return result;
+    }, [goals, options]);
+
+    return bindings;
 }
