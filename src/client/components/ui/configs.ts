@@ -121,6 +121,12 @@ const configs = {
             active: Color3.fromRGB(33, 112, 10),
             accent: Color3.fromRGB(255, 255, 255),
         },
+        softGreen: {
+            foreground: Color3.fromRGB(255, 255, 255),
+            background: Color3.fromRGB(48, 171, 120),
+            active: Color3.fromRGB(41, 138, 97),
+            accent: Color3.fromRGB(0, 0, 0),
+        },
     },
     gameShapes: {
         circle: "rbxassetid://9266750641",
@@ -133,6 +139,10 @@ const configs = {
         Medium: "Medium",
         SemiBold: "SemiBold",
         Bold: "Bold",
+    },
+    icons: {
+        plus: "rbxassetid://9208725269",
+        chevronRight: "rbxassetid://9225412285",
     },
     fonts: {
         Inter: {

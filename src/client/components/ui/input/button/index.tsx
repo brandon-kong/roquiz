@@ -21,6 +21,8 @@ interface ButtonProps {
     text?: string;
     onClick?: () => void;
     disabled?: boolean;
+    position?: UDim2;
+    anchorPoint?: Vector2;
 }
 
 export function Button({
@@ -230,20 +232,45 @@ interface IconButtonProps extends ButtonProps {
 }
 
 export function IconButton(props: IconButtonProps) {
+    const [hovered, setHovered] = useState(false);
+
+    const [scale, setScale] = useBinding(1);
+
+    const scaleBinding = useSpring(scale, configs.spring.default);
+
+    useEffect(() => {
+        if (hovered) {
+            setScale(1.1);
+        } else {
+            setScale(1);
+        }
+    }, [hovered]);
+
     return (
         <imagebutton
             Image={configs.gameShapes.circle}
             ImageColor3={configs.colors[props.variant ?? "primary"].background}
             BackgroundTransparency={1}
             Size={props.size ?? new UDim2(0, 50, 0, 50)}
+            AnchorPoint={props.anchorPoint ?? new Vector2(0.5, 0.5)}
+            Position={props.position ?? new UDim2(0.5, 0, 0.5, 0)}
             Event={{
                 Activated: () => {
                     if (props.onClick) {
                         props.onClick();
                     }
                 },
+
+                MouseEnter: () => {
+                    setHovered(true);
+                },
+
+                MouseLeave: () => {
+                    setHovered(false);
+                },
             }}
         >
+            <uiscale Scale={scaleBinding} />
             <AspectRatio ratio={1} />
             <Padding left={8} right={8} top={8} bottom={8} />
 
