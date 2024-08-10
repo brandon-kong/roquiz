@@ -3,8 +3,8 @@ export type FontWeight = "Regular" | "Medium" | "SemiBold" | "Bold";
 type Color = {
     foreground: Color3;
     background: Color3;
-    active?: Color3;
-    accent?: Color3;
+    active: Color3;
+    accent: Color3;
 };
 
 type SizeToken = "xs" | "sm" | "md" | "lg" | "xl";
@@ -29,7 +29,7 @@ type Configs = {
     };
 };
 
-export default {
+const configs = {
     textSize: {
         xs: 14,
         sm: 16,
@@ -48,7 +48,7 @@ export default {
         primary: {
             foreground: new Color3(1, 1, 1),
             background: Color3.fromRGB(0, 0, 0),
-            active: Color3.fromRGB(30, 30, 30),
+            active: Color3.fromRGB(140, 87, 87),
             accent: Color3.fromRGB(227, 227, 227),
         },
         accent: {
@@ -81,6 +81,13 @@ export default {
             active: Color3.fromRGB(200, 0, 0),
             accent: Color3.fromRGB(255, 255, 255),
         },
+
+        gameRed: {
+            foreground: Color3.fromRGB(255, 255, 255),
+            background: Color3.fromRGB(227, 26, 60),
+            active: Color3.fromRGB(194, 23, 51),
+            accent: Color3.fromRGB(255, 255, 255),
+        },
     },
     weights: {
         Regular: "Regular",
@@ -96,4 +103,8 @@ export default {
             Bold: Font.fromName("Inter", Enum.FontWeight.Bold),
         },
     },
-} as Configs;
+};
+
+export default configs;
+
+export type ColorToken = keyof typeof configs.colors;

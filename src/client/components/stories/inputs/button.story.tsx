@@ -5,7 +5,7 @@ import { InferFusionProps } from "@rbxts/ui-labs";
 import Button from "@src/client/components/ui/input/button";
 
 const controls = {
-    variant: "secondary",
+    variant: "primary",
     disabled: false,
 };
 

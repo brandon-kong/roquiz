@@ -1,4 +1,4 @@
-import React, { useState } from "@rbxts/react";
+import React, { useEffect, useState } from "@rbxts/react";
 import {
     AspectRatio,
     Padding,
@@ -29,7 +29,8 @@ export function Button({
         variant = "primary";
     }
 
-    const [hovered, setHovered] = useState<boolean>(false);
+    const [hovered, setHovered] = useState(false);
+    const canvasRef = React.createRef<CanvasGroup>();
 
     return (
         <canvasgroup
@@ -45,7 +46,7 @@ export function Button({
         >
             <UICorner radius={configs.rounded.sm} />
             <SizeConstraint
-                max={new Vector2(1000, 56)}
+                max={new Vector2(1000, 100)}
                 min={new Vector2(56, 32)}
             />
             <textbutton
