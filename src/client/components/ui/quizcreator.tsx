@@ -41,14 +41,19 @@ const selectButtons: QuestionAnswerCardProps[] = [
 function QuizCreator() {
     const [controlsExpanded, setControlsExpanded] = useState(false);
 
-    const [mainSize, setMainSize] = useBinding(new UDim2(0.8, 0, 1, 0));
-    const controlsExpandedBinding = useSpring(mainSize, configs.spring.default);
+    const [controlsPosition, setControlsPosition] = useBinding(
+        new UDim2(0.8, 0, 1, 0),
+    );
+    const controlsExpandedBinding = useSpring(
+        controlsPosition,
+        configs.spring.default,
+    );
 
     useEffect(() => {
         if (controlsExpanded) {
-            setMainSize(new UDim2(0.6, 0, 1, 0));
+            setControlsPosition(new UDim2(0.75, 0, 0, 0));
         } else {
-            setMainSize(new UDim2(0.8, 0, 1, 0));
+            setControlsPosition(new UDim2(1, 0, 0, 0));
         }
     }, [controlsExpanded]);
 
@@ -155,7 +160,9 @@ function QuizCreator() {
                     </frame>
                 </frame>
             </frame>
+
             <imagebutton
+                Visible={controlsExpanded}
                 Active={controlsExpanded}
                 AutoButtonColor={false}
                 Image={undefined}
@@ -168,7 +175,9 @@ function QuizCreator() {
                         setControlsExpanded(!controlsExpanded);
                     },
                 }}
-            >
+            />
+
+            <frame BackgroundTransparency={1} Size={new UDim2(1, 0, 1, 0)}>
                 <imagebutton
                     AutoButtonColor={false}
                     Active={controlsExpanded}
@@ -176,11 +185,7 @@ function QuizCreator() {
                     key={"quiz-creator-question-controls"}
                     BackgroundColor3={configs.colors.white.background}
                     Size={new UDim2(0.25, 0, 1, 0)}
-                    Position={
-                        controlsExpanded
-                            ? new UDim2(0.75, 0, 0, 0)
-                            : new UDim2(1, 0, 0, 0)
-                    }
+                    Position={controlsExpandedBinding}
                     AnchorPoint={new Vector2(0, 0)}
                 >
                     <frame
@@ -219,7 +224,7 @@ function QuizCreator() {
                         </imagelabel>
                     </imagebutton>
                 </imagebutton>
-            </imagebutton>
+            </frame>
         </>
     );
 }
