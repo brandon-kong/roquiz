@@ -88,6 +88,30 @@ const configs = {
             active: Color3.fromRGB(194, 23, 51),
             accent: Color3.fromRGB(255, 255, 255),
         },
+        gameBlue: {
+            foreground: Color3.fromRGB(255, 255, 255),
+            background: Color3.fromRGB(19, 104, 206),
+            active: Color3.fromRGB(18, 89, 176),
+            accent: Color3.fromRGB(255, 255, 255),
+        },
+        gameYellow: {
+            foreground: Color3.fromRGB(255, 255, 255),
+            background: Color3.fromRGB(216, 158, 2),
+            active: Color3.fromRGB(204, 158, 0),
+            accent: Color3.fromRGB(255, 255, 255),
+        },
+        gameGreen: {
+            foreground: Color3.fromRGB(255, 255, 255),
+            background: Color3.fromRGB(39, 137, 13),
+            active: Color3.fromRGB(33, 112, 10),
+            accent: Color3.fromRGB(255, 255, 255),
+        },
+    },
+    gameShapes: {
+        circle: "rbxassetid://9266750641",
+        square: "rbxassetid://9266736698",
+        triangle: "rbxassetid://9266744542",
+        diamond: "rbxassetid://9266748671",
     },
     weights: {
         Regular: "Regular",

@@ -158,12 +158,6 @@ export function CodeInput(props: Omit<TextInputProps, "numbersOnly">) {
     );
 }
 
-interface QuestionAnswerCardProps {
-    text?: string;
-    setText?: (text: string) => void;
-    color?: ColorToken;
-}
-
 function stripText(text: string) {
     // Trim leading and trailing whitespace
     const newText = text.match("^%s*(.-)%s*$")[0] as string;
@@ -171,21 +165,33 @@ function stripText(text: string) {
     return newText.gsub("%s", "")[0].gsub("%D", "");
 }
 
-export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
-    const [text, setText] = useState(props.text ?? "");
+interface QuestionAnswerCardProps {
+    shape?: string;
+    size?: UDim2;
+    text?: string;
+    setText?: (text: string) => void;
+    color?: ColorToken;
 
-    // check if the whole box should be highlighted
-    // get rid of whitespace
+    onAnswerSelectCorrect?: () => void;
+    onAnswerDeselectCorrect?: () => void;
+}
+
+export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
+    const [text, setText] = useState<string>(props.text ?? "");
+    const [correct, setCorrect] = useState<boolean>(false);
+
     const validText = text.size() > 0 && stripText(text).size() > 0;
 
     return (
         <canvasgroup
             BackgroundColor3={
                 validText
-                    ? configs.colors["gameRed"].background
+                    ? props.color
+                        ? configs.colors[props.color].background
+                        : configs.colors["gameGreen"].background
                     : configs.colors["white"].background
             }
-            Size={new UDim2(1, 0, 0, 100)}
+            Size={props.size ?? new UDim2(1, 0, 1, 0)}
         >
             <UICorner radius={configs.rounded.md} />
             <Padding left={4} right={4} top={4} bottom={4} />
@@ -203,15 +209,15 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
                     BackgroundColor3={
                         props.color
                             ? configs.colors[props.color].background
-                            : configs.colors["gameRed"].background
+                            : configs.colors["gameGreen"].background
                     }
-                    Size={new UDim2(0.1, 0, 1, 0)}
+                    Size={new UDim2(0.2, 0, 1, 0)}
                 >
                     <UICorner radius={configs.rounded.md} />
                     <imagelabel
-                        Image={"rbxassetid://9266744542"}
+                        Image={props.shape ?? configs.gameShapes.circle}
                         BackgroundTransparency={1}
-                        Size={new UDim2(0.8, 0, 0.8, 0)}
+                        Size={new UDim2(0.6, 0, 0.6, 0)}
                         Position={new UDim2(0.5, 0, 0.5, 0)}
                         AnchorPoint={new Vector2(0.5, 0.5)}
                     >
@@ -219,17 +225,19 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
                     </imagelabel>
                 </frame>
                 <TextInput
+                    placeholder="Answer"
+                    clearOnFocus={false}
                     color={
                         validText
                             ? props.color
                                 ? configs.colors[props.color].foreground
-                                : configs.colors["gameRed"].foreground
+                                : configs.colors["gameGreen"].foreground
                             : configs.colors["white"].foreground
                     }
                     horizontalAlignment={Enum.TextXAlignment.Left}
                     backgroundTransparency={1}
-                    size={new UDim2(0.5, 0, 1, 0)}
-                    textSize={configs.textSize.lg}
+                    size={new UDim2(0.65, 0, 1, 0)}
+                    textSize={configs.textSize.sm}
                     text={props.text}
                     onChange={(text) => {
                         setText(text);
@@ -238,6 +246,23 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
                         }
                     }}
                 />
+
+                <frame
+                    BorderSizePixel={0}
+                    BackgroundTransparency={1}
+                    Size={new UDim2(0.15, 0, 1, 0)}
+                >
+                    <UICorner radius={configs.rounded.md} />
+                    <imagelabel
+                        Image={"rbxassetid://9266744542"}
+                        BackgroundTransparency={1}
+                        Size={new UDim2(0.6, 0, 0.6, 0)}
+                        Position={new UDim2(0.5, 0, 0.5, 0)}
+                        AnchorPoint={new Vector2(0.5, 0.5)}
+                    >
+                        <AspectRatio ratio={1} />
+                    </imagelabel>
+                </frame>
             </frame>
         </canvasgroup>
     );

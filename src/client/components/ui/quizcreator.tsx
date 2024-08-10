@@ -7,9 +7,33 @@ import {
     UIGrid,
     UIList,
 } from "./library";
-import configs from "./configs";
-import { TextInput } from "./input/textinput";
+import configs, { ColorToken } from "./configs";
+import { QuestionAnswerCard, TextInput } from "./input/textinput";
 import Button from "./input/button";
+
+type SelectionButton = {
+    color: ColorToken;
+    shape: string;
+};
+
+const selectButtons: SelectionButton[] = [
+    {
+        color: "gameRed",
+        shape: configs.gameShapes.circle,
+    },
+    {
+        color: "gameBlue",
+        shape: configs.gameShapes.diamond,
+    },
+    {
+        color: "gameYellow",
+        shape: configs.gameShapes.triangle,
+    },
+    {
+        color: "gameGreen",
+        shape: configs.gameShapes.square,
+    },
+];
 
 function QuizCreator() {
     return (
@@ -86,21 +110,13 @@ function QuizCreator() {
                         cellSize={new UDim2(0.5, -8, 0.5, -8)}
                         cellPadding={new UDim2(0, 8, 0, 8)}
                     />
-                    <Button
-                        variant="accent"
-                        text="Add Answer"
-                        size={new UDim2(1, 0, 1, 0)}
-                    />
-                    <Button
-                        variant="accent"
-                        text="Add Answer"
-                        size={new UDim2(1, 0, 1, 0)}
-                    />
-                    <Button
-                        variant="accent"
-                        text="Add Answer"
-                        size={new UDim2(1, 0, 1, 0)}
-                    />
+
+                    {selectButtons.map((button) => (
+                        <QuestionAnswerCard
+                            size={new UDim2(1, 0, 1, 0)}
+                            {...button}
+                        />
+                    ))}
                 </frame>
             </frame>
         </frame>
