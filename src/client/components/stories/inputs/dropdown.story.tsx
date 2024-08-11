@@ -11,7 +11,9 @@ const controls = {
 };
 
 function DropdownStory(props: InferProps<typeof controls>) {
-    return <Dropdown options={["Option 1", "Option 2"]} />;
+    return (
+        <Dropdown options={["Option 1", "Option 2", "Option 3", "Option 4"]} />
+    );
 }
 
 const story = {

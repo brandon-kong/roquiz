@@ -1,4 +1,4 @@
-import React from "@rbxts/react";
+import React, { InstanceEvent } from "@rbxts/react";
 import configs, { FontWeight } from "@ui/configs";
 
 type Flex = Enum.UIFlexAlignment;
@@ -22,6 +22,8 @@ interface UIListProps {
     horizontalFlex?: Flex;
     verticalFlex?: Flex;
     wraps?: boolean;
+
+    onContentSizeChange?: (contentSize: Vector2) => void;
 }
 
 interface UICornerProps {
@@ -29,6 +31,7 @@ interface UICornerProps {
 }
 
 interface TypographyProps {
+    transparency?: number;
     font?: Font;
     weight?: FontWeight;
     size?: UDim2;
@@ -38,6 +41,7 @@ interface TypographyProps {
     horizontalAlignment?: Enum.TextXAlignment;
     verticalAlignment?: Enum.TextYAlignment;
     truncate?: boolean;
+    automaticSize?: Enum.AutomaticSize;
 }
 
 interface StrokeProps {
@@ -86,18 +90,23 @@ export function Stroke(props: StrokeProps) {
     );
 }
 
-export function UIList({
-    fillDirection,
-    sortOrder,
-    verticalAlignment,
-    verticalFlex,
-    horizontalAlignment,
-    horizontalFlex,
-    padding,
-    wraps,
-}: UIListProps) {
-    return (
+export const UIList = React.forwardRef<UIListLayout, UIListProps>(
+    (
+        {
+            fillDirection,
+            sortOrder,
+            verticalAlignment,
+            verticalFlex,
+            horizontalAlignment,
+            horizontalFlex,
+            padding,
+            wraps,
+            onContentSizeChange,
+        },
+        ref,
+    ) => (
         <uilistlayout
+            ref={ref}
             FillDirection={fillDirection}
             SortOrder={sortOrder ?? Enum.SortOrder.LayoutOrder}
             VerticalAlignment={
@@ -110,9 +119,16 @@ export function UIList({
             HorizontalFlex={horizontalFlex ?? Enum.UIFlexAlignment.None}
             Padding={typeIs(padding, "number") ? new UDim(0, padding) : padding}
             Wraps={wraps ?? false}
+            Change={{
+                AbsoluteContentSize: (rbx) => {
+                    if (onContentSizeChange) {
+                        onContentSizeChange(rbx.AbsoluteContentSize);
+                    }
+                },
+            }}
         />
-    );
-}
+    ),
+);
 
 export function UICorner({ radius }: UICornerProps) {
     return (
@@ -139,6 +155,7 @@ export function SizeConstraint({ min, max }: { min?: Vector2; max?: Vector2 }) {
 }
 
 export function Typography({
+    transparency,
     font,
     size,
     weight,
@@ -148,9 +165,11 @@ export function Typography({
     horizontalAlignment,
     verticalAlignment,
     truncate,
+    automaticSize,
 }: TypographyProps) {
     return (
         <textlabel
+            TextTransparency={transparency ?? 0}
             FontFace={font ?? configs.fonts.Inter.Regular}
             TextScaled={true}
             Text={text ?? "Text"}
@@ -162,6 +181,7 @@ export function Typography({
             TextTruncate={
                 truncate ? Enum.TextTruncate.AtEnd : Enum.TextTruncate.None
             }
+            AutomaticSize={automaticSize ?? Enum.AutomaticSize.None}
         >
             <TextSizeConstraint min={10} max={textSize} />
         </textlabel>

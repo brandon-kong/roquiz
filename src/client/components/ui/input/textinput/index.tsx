@@ -1,3 +1,4 @@
+import { UserInputService } from "@rbxts/services";
 import React, { Children, useBinding, useEffect, useState } from "@rbxts/react";
 import {
     AspectRatio,
@@ -323,11 +324,79 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
     );
 }
 
-interface DropdownProps {
-    options: string[];
-    selected?: string;
-    onSelect?: (option: string) => void;
-    size?: UDim2;
+function DetailedDropdownItem(props: {
+    text: string;
+    description: string;
+    onSelect: () => void;
+}) {
+    const [hovered, setHovered] = useState(false);
+
+    const [backgroundColor, setBackgroundColor] = useBinding(
+        configs.colors.white.background,
+    );
+
+    const backgroundColorBinding = useSpring(
+        backgroundColor,
+        configs.spring.default,
+    );
+
+    useEffect(() => {
+        if (hovered) {
+            setBackgroundColor(configs.colors.white.active);
+        } else {
+            setBackgroundColor(configs.colors.white.background);
+        }
+    }, [hovered]);
+
+    return (
+        <textbutton
+            Text={""}
+            TextTransparency={1}
+            BackgroundColor3={backgroundColorBinding}
+            Active={true}
+            AutoButtonColor={false}
+            Size={new UDim2(1, 0, 0, 0)}
+            AutomaticSize={Enum.AutomaticSize.Y}
+            Event={{
+                Activated: () => {
+                    props.onSelect();
+                },
+                MouseEnter: () => {
+                    setHovered(true);
+                },
+                MouseLeave: () => {
+                    setHovered(false);
+                },
+            }}
+        >
+            <Padding left={8} right={8} top={8} bottom={8} />
+
+            <UICorner radius={configs.rounded.sm} />
+            <UIList
+                fillDirection={Enum.FillDirection.Vertical}
+                verticalAlignment={Enum.VerticalAlignment.Top}
+            />
+            <Typography
+                text={props.text}
+                size={new UDim2(1, 0, 0, 40)}
+                font={configs.fonts.Inter.SemiBold}
+                color={configs.colors.white.foreground}
+                textSize={configs.textSize.lg}
+                horizontalAlignment={Enum.TextXAlignment.Center}
+            />
+
+            <Typography
+                text={props.description}
+                size={new UDim2(0.8, 0, 0, 20)}
+                color={configs.colors.white.foreground}
+                transparency={0.5}
+                textSize={configs.textSize.md}
+                font={configs.fonts.Inter.Medium}
+                horizontalAlignment={Enum.TextXAlignment.Left}
+                automaticSize={Enum.AutomaticSize.Y}
+            />
+        </textbutton>
+    );
 }
 
 function DropdownItem(props: { text: string; onSelect: () => void }) {
@@ -352,6 +421,7 @@ function DropdownItem(props: { text: string; onSelect: () => void }) {
 
     return (
         <textbutton
+            Active={true}
             AutoButtonColor={false}
             FontFace={configs.fonts.Inter.SemiBold}
             TextScaled={true}
@@ -378,11 +448,64 @@ function DropdownItem(props: { text: string; onSelect: () => void }) {
     );
 }
 
+export type DetailedOption = {
+    value: string;
+    description: string;
+};
+
+interface DropdownProps {
+    options: Array<string | DetailedOption>;
+    selected?: string;
+    onSelect?: (option: string) => void;
+    size?: UDim2;
+}
+
+function getDropdownValue(option: string | DetailedOption) {
+    if (typeIs(option, "table")) {
+        return (option as DetailedOption).value;
+    } else {
+        return option;
+    }
+}
+
 export function Dropdown(props: DropdownProps) {
     const [selected, setSelected] = useState<string>(
-        props.selected ?? props.options[0],
+        props.selected !== undefined
+            ? // find the option with the same value as the selected value
+
+              (props.options.find((option) => {
+                  return getDropdownValue(option) === props.selected;
+              }) as string)
+            : // if no selected value, use the first option
+              getDropdownValue(props.options[0]),
     );
     const [expanded, setExpanded] = useState<boolean>(false);
+
+    const [strokeTransparency, setStrokeTransparency] = useBinding(0.9);
+
+    const strokeBinding = useSpring(strokeTransparency, configs.spring.default);
+
+    useEffect(() => {
+        let inputConnection: RBXScriptConnection | undefined;
+
+        if (expanded) {
+            setStrokeTransparency(0);
+
+            inputConnection = UserInputService.InputEnded.Connect((input) => {
+                if (input.UserInputType === Enum.UserInputType.MouseButton1) {
+                    setExpanded(false);
+                }
+            });
+        } else {
+            setStrokeTransparency(0.9);
+        }
+
+        return () => {
+            if (inputConnection) {
+                inputConnection.Disconnect();
+            }
+        };
+    }, [expanded]);
 
     return (
         <imagebutton
@@ -399,17 +522,18 @@ export function Dropdown(props: DropdownProps) {
             <UIList
                 fillDirection={Enum.FillDirection.Vertical}
                 verticalAlignment={Enum.VerticalAlignment.Top}
+                padding={8}
             />
 
             <Stroke
                 thickness={2}
                 color={configs.colors.black.background}
-                transparency={0.9}
+                transparency={strokeBinding}
             />
             <UICorner radius={configs.rounded.sm} />
-            <Padding left={8} right={8} top={8} bottom={8} />
+            <Padding left={16} right={8} top={8} bottom={8} />
 
-            <frame BackgroundTransparency={1} Size={new UDim2(1, 0, 0, 32)}>
+            <frame BackgroundTransparency={1} Size={new UDim2(1, 0, 0, 24)}>
                 <imagelabel
                     BackgroundTransparency={1}
                     Size={new UDim2(0.5, 0, 0.5, 0)}
@@ -445,15 +569,35 @@ export function Dropdown(props: DropdownProps) {
                 />
 
                 {props.options.map((option) => {
+                    const value = getDropdownValue(option);
+
+                    if (typeIs(option, "table")) {
+                        return (
+                            <DetailedDropdownItem
+                                text={value}
+                                description={
+                                    (option as DetailedOption).description
+                                }
+                                onSelect={() => {
+                                    setSelected(value);
+                                    if (props.onSelect) {
+                                        props.onSelect(value);
+                                    }
+                                    setExpanded(false);
+                                }}
+                            />
+                        );
+                    }
+
                     return (
                         <DropdownItem
-                            text={option}
+                            text={value}
                             onSelect={() => {
-                                setSelected(option);
-                                setExpanded(false);
+                                setSelected(value);
                                 if (props.onSelect) {
-                                    props.onSelect(option);
+                                    props.onSelect(value);
                                 }
+                                setExpanded(false);
                             }}
                         />
                     );

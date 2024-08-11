@@ -20,6 +20,7 @@ import { useSpring } from "../hooks/useSpring";
 import { controls } from "../stories/inputs/button.story";
 import ModalBackdrop from "./modal-backdrop";
 import Separator from "./separator";
+import QuizControlFrame from "./input/quiz-control-frame";
 
 const selectButtons: QuestionAnswerCardProps[] = [
     {
@@ -41,37 +42,8 @@ const selectButtons: QuestionAnswerCardProps[] = [
     },
 ];
 
-interface ControlDropdownProps {
-    title: string;
-    options: string[];
-}
-
-function ControlDropdown(props: ControlDropdownProps) {
-    return (
-        <frame
-            BackgroundTransparency={1}
-            AutomaticSize={Enum.AutomaticSize.Y}
-            Size={new UDim2(1, 0, 0, 0)}
-        >
-            <UIList
-                fillDirection={Enum.FillDirection.Vertical}
-                verticalAlignment={Enum.VerticalAlignment.Center}
-                padding={new UDim(0, 4)}
-            />
-            <Typography
-                text={props.title}
-                font={configs.fonts.Inter.SemiBold}
-                textSize={configs.textSize.lg}
-                color={configs.colors.white.foreground}
-                horizontalAlignment={Enum.TextXAlignment.Left}
-                size={new UDim2(1, 0, 0, 40)}
-            />
-            <Dropdown options={props.options} />
-        </frame>
-    );
-}
-
 function QuizCreator() {
+    const controlsScrollRef = React.createRef<ScrollingFrame>();
     const [controlsExpanded, setControlsExpanded] = useState(false);
 
     const [controlsPosition, setControlsPosition] = useBinding(
@@ -84,7 +56,7 @@ function QuizCreator() {
 
     useEffect(() => {
         if (controlsExpanded) {
-            setControlsPosition(new UDim2(0.7, 0, 0, 0));
+            setControlsPosition(new UDim2(0.65, 0, 0, 0));
         } else {
             setControlsPosition(new UDim2(1, 0, 0, 0));
         }
@@ -208,62 +180,12 @@ function QuizCreator() {
                     BorderSizePixel={0}
                     key={"quiz-creator-question-controls"}
                     BackgroundColor3={configs.colors.white.background}
-                    Size={new UDim2(0.3, 0, 1, 0)}
+                    Size={new UDim2(0.35, 0, 1, 0)}
                     Position={controlsExpandedBinding}
                     AnchorPoint={new Vector2(0, 0)}
                 >
-                    <frame
-                        BackgroundTransparency={1}
-                        Size={new UDim2(1, 0, 1, 0)}
-                    >
-                        <UIList
-                            fillDirection={Enum.FillDirection.Vertical}
-                            verticalAlignment={Enum.VerticalAlignment.Top}
-                            padding={new UDim(0, 8)}
-                        />
-                        <Padding
-                            left={new UDim(0.05, 0)}
-                            right={new UDim(0.05, 0)}
-                            top={8}
-                            bottom={8}
-                        />
-                        <Button
-                            variant={"destructive"}
-                            text={"Delete"}
-                            size={new UDim2(1, 0, 0, 40)}
-                        />
-                        <Button
-                            variant={"secondary"}
-                            text={"Duplicate"}
-                            size={new UDim2(1, 0, 0, 40)}
-                        />
+                    <QuizControlFrame />
 
-                        <frame
-                            BackgroundTransparency={1}
-                            Size={new UDim2(1, 0, 0, 8)}
-                        />
-                        <Separator
-                            color={configs.colors.secondary.background}
-                        />
-
-                        <frame
-                            BackgroundTransparency={1}
-                            Size={new UDim2(1, 0, 0, 8)}
-                        />
-                        <ControlDropdown
-                            title={"Question Type"}
-                            options={[
-                                "Multiple Choice",
-                                "True/False",
-                                "Short Answer",
-                            ]}
-                        />
-
-                        <ControlDropdown
-                            title={"Difficulty"}
-                            options={["Easy", "Medium", "Hard"]}
-                        />
-                    </frame>
                     <imagebutton
                         AutoButtonColor={false}
                         BackgroundColor3={configs.colors.white.background}
