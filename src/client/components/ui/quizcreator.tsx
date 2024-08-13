@@ -31,20 +31,27 @@ import {
 import QuizCreatorQuestionEditor from "./input/quiz-creator-question-editor";
 
 function getQuestionAnswerType(question: Question) {
-    if (question.type === "Multiple Choice") {
-        question.options = ["", "", "", ""];
-        question.answer = {
+    const questionTyped = question as Question & {
+        options?: string[];
+    };
+
+    if (questionTyped.type === "Multiple Choice") {
+        questionTyped.options = ["", "", "", ""];
+        questionTyped.answer = {
             0: false,
             1: false,
             2: false,
             3: false,
         };
-    } else if (question.type === "True or False") {
-        question.answer = false;
-    } else if (question.type === "Short Answer") {
-        question.answer = "";
+    } else if (questionTyped.type === "True or False") {
+        questionTyped.options = undefined;
+        questionTyped.answer = false;
+    } else if (questionTyped.type === "Short Answer") {
+        questionTyped.options = undefined;
+        questionTyped.answer = "";
     }
-    return question;
+
+    return questionTyped;
 }
 
 function blankQuestion(): Question {
@@ -176,6 +183,12 @@ function QuizCreator() {
 
                 <QuizCreatorQuestionEditor
                     question={questions[currentQuestion ?? 0]}
+                    onTrueFalseAnswerChange={(value) => {
+                        setQuestions((prev) => {
+                            prev[currentQuestion].answer = value;
+                            return [...prev];
+                        });
+                    }}
                     onQuestionChange={(question) => {
                         setQuestions((prev) => {
                             prev[currentQuestion].question = question;

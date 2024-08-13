@@ -32,6 +32,7 @@ interface TextInputProps {
     color?: Color3;
 
     horizontalAlignment?: Enum.TextXAlignment;
+    textEditable?: boolean;
 }
 
 export function TextInput(props: TextInputProps) {
@@ -40,6 +41,7 @@ export function TextInput(props: TextInputProps) {
 
     return (
         <textbox
+            TextEditable={props.textEditable}
             TextXAlignment={
                 props.horizontalAlignment ?? Enum.TextXAlignment.Center
             }
@@ -194,6 +196,7 @@ function textIsValid(text: string) {
 }
 
 export interface QuestionAnswerCardProps {
+    textEditable?: boolean;
     shape?: string;
     size?: UDim2;
     text?: string;
@@ -270,6 +273,7 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
                     </imagelabel>
                 </frame>
                 <TextInput
+                    textEditable={props.textEditable}
                     placeholder="Answer"
                     clearOnFocus={false}
                     color={

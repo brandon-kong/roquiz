@@ -15,7 +15,11 @@ import {
     TextInput,
 } from "./textinput";
 import { IconButton } from "./button";
-import { MultipleChoiceQuestion, Question } from "@src/shared/types/quiz";
+import {
+    MultipleChoiceQuestion,
+    Question,
+    TrueFalseQuestion,
+} from "@src/shared/types/quiz";
 
 const selectButtons: QuestionAnswerCardProps[] = [
     {
@@ -43,6 +47,112 @@ interface QuizCreatorQuestionEditorProps {
     onImageChange?: (image: string) => void;
     onOptionChange?: (option: string, index: number) => void;
     onAnswerChange?: (index: number, value: boolean) => void;
+
+    onTrueFalseAnswerChange: (value: boolean) => void;
+}
+
+function MultipleChoiceQuestionEditor(props: QuizCreatorQuestionEditorProps) {
+    return (
+        <>
+            <UIGrid
+                fillDirection={Enum.FillDirection.Horizontal}
+                cellSize={new UDim2(0.5, -8, 0.5, -8)}
+                cellPadding={new UDim2(0, 8, 0, 8)}
+            />
+
+            {selectButtons.map((button, index) => (
+                <QuestionAnswerCard
+                    correct={
+                        (props.question as MultipleChoiceQuestion).answer[
+                            index
+                        ] === true
+                    }
+                    text={
+                        (props.question as MultipleChoiceQuestion).options[
+                            index
+                        ]
+                    }
+                    onAnswerChange={(value) => {
+                        props.onAnswerChange?.(index, value);
+                    }}
+                    key={index}
+                    onOptionChange={(option) => {
+                        props.onOptionChange?.(option, index);
+                    }}
+                    size={new UDim2(1, 0, 1, 0)}
+                    {...button}
+                />
+            ))}
+        </>
+    );
+}
+
+interface TrueFalseQuestionEditorProps {
+    question: TrueFalseQuestion;
+    onAnswerChange?: (value: boolean) => void;
+}
+
+function TrueFalseQuestionEditor(props: TrueFalseQuestionEditorProps) {
+    return (
+        <>
+            <UIGrid
+                fillDirection={Enum.FillDirection.Horizontal}
+                cellSize={new UDim2(0.5, -8, 1, -8)}
+                cellPadding={new UDim2(0, 8, 0, 8)}
+            />
+
+            {[1, 2].map((button, index) => (
+                <QuestionAnswerCard
+                    correct={
+                        ((props.question as TrueFalseQuestion).answer ===
+                            true &&
+                            index === 0) ||
+                        ((props.question as TrueFalseQuestion).answer ===
+                            false &&
+                            index === 1)
+                    }
+                    text={
+                        index === 0 ? "True" : index === 1 ? "False" : "Unknown"
+                    }
+                    onAnswerChange={(value) => {
+                        if (index === 0 && value === true) {
+                            props.onAnswerChange?.(true);
+                        }
+                        if (index === 1 && value === true) {
+                            props.onAnswerChange?.(false);
+                        }
+                    }}
+                    textEditable={false}
+                    key={index}
+                    size={new UDim2(1, 0, 1, 0)}
+                    color={index % 2 === 0 ? "gameRed" : "gameBlue"}
+                    shape={
+                        index % 2 === 0
+                            ? configs.gameShapes.circle
+                            : configs.gameShapes.diamond
+                    }
+                />
+            ))}
+        </>
+    );
+}
+
+function ShortAnswerQuestionEditor(props: QuizCreatorQuestionEditorProps) {
+    return (
+        <>
+            <TextInput
+                text={(props.question as ShortAnswerQuestion).answer}
+                placeholder={"Answer"}
+                size={new UDim2(1, 0, 0.5, 0)}
+                clearOnFocus={false}
+                maxLength={100}
+                borderRadius={configs.rounded.md}
+                onChange={(value) => {
+                    props.onAnswerChange?.(value);
+                }}
+            />
+        </>
+    );
 }
 
 function QuizCreatorQuestionEditor(props: QuizCreatorQuestionEditorProps) {
@@ -113,32 +223,13 @@ function QuizCreatorQuestionEditor(props: QuizCreatorQuestionEditorProps) {
                 Size={new UDim2(0.9, 0, 0.35, 0)}
                 Position={new UDim2(0, 0, 0, 0)}
             >
-                <UIGrid
-                    fillDirection={Enum.FillDirection.Horizontal}
-                    cellSize={new UDim2(0.5, -8, 0.5, -8)}
-                    cellPadding={new UDim2(0, 8, 0, 8)}
-                />
-
-                {props.question.type === "Multiple Choice" &&
-                    selectButtons.map((button, index) => (
-                        <QuestionAnswerCard
-                            correct={
-                                (props.question as MultipleChoiceQuestion)
-                                    .answer[index] === true
-                            }
-                            text={
-                                (props.question as MultipleChoiceQuestion)
-                                    .options[index]
-                            }
-                            onAnswerChange={(value) => {
-                                props.onAnswerChange?.(index, value);
-                            }}
-                            key={index}
-                            onOptionChange={(option) => {
-                                props.onOptionChange?.(option, index);
-                            }}
-                            size={new UDim2(1, 0, 1, 0)}
-                            {...button}
+                {(props.question.type === "Multiple Choice" && (
+                    <MultipleChoiceQuestionEditor {...props} />
+                )) ||
+                    (props.question.type === "True or False" && (
+                        <TrueFalseQuestionEditor
+                            question={props.question}
+                            onAnswerChange={props.onTrueFalseAnswerChange}
                         />
                     ))}
             </frame>
