@@ -5,13 +5,17 @@ import {
     AspectRatio,
     Padding,
     SizeConstraint,
+    Stroke,
     Typography,
     UICorner,
+    UIList,
 } from "@ui/library";
 import configs, { ColorToken } from "@ui/configs";
 import { useSpring } from "@src/client/components/hooks/useSpring";
 
 import Roact from "@rbxts/roact";
+import { number } from "@rbxts/react/src/prop-types";
+import { Question } from "@src/shared/types/quiz";
 
 type ButtonVariants = ColorToken;
 
@@ -73,7 +77,7 @@ export function Button({
             <UICorner radius={configs.rounded.sm} />
             <SizeConstraint
                 max={new Vector2(1000, 100)}
-                min={new Vector2(56, 32)}
+                min={new Vector2(56, 24)}
             />
             <textbutton
                 AutoButtonColor={false}
@@ -287,6 +291,131 @@ export function IconButton(props: IconButtonProps) {
                 <AspectRatio ratio={1} />
             </imagelabel>
         </imagebutton>
+    );
+}
+
+interface QuestionButtonProps {
+    index: number;
+    onClick?: () => void;
+    active?: boolean;
+    question: Question;
+}
+
+function truncateText(text: string, length: number) {
+    if (text.size() > length) {
+        return text.sub(0, length) + "...";
+    }
+
+    return text;
+}
+
+export function QuestionButton(props: QuestionButtonProps) {
+    const [hovered, setHovered] = useState(false);
+
+    return (
+        <textbutton
+            AutoButtonColor={false}
+            Text={""}
+            TextTransparency={1}
+            BorderSizePixel={0}
+            BackgroundColor3={
+                props.active
+                    ? configs.colors.white.active
+                    : configs.colors.white.background
+            }
+            Size={new UDim2(1, 0, 0, 120)}
+            Event={{
+                MouseEnter: () => {
+                    setHovered(true);
+                },
+
+                MouseLeave: () => {
+                    setHovered(false);
+                },
+
+                Activated: () => {
+                    if (props.onClick) {
+                        props.onClick();
+                    }
+                },
+            }}
+        >
+            <UIList
+                fillDirection={Enum.FillDirection.Vertical}
+                verticalAlignment={Enum.VerticalAlignment.Top}
+            />
+            <Padding left={8} right={8} top={4} bottom={4} />
+
+            <frame BackgroundTransparency={1} Size={new UDim2(1, 0, 0.3, 0)}>
+                <UIList
+                    fillDirection={Enum.FillDirection.Horizontal}
+                    horizontalFlex={Enum.UIFlexAlignment.SpaceBetween}
+                    horizontalAlignment={Enum.HorizontalAlignment.Left}
+                />
+                <Typography
+                    text={`${props.index + 1}.`}
+                    textSize={configs.textSize.md}
+                    font={configs.fonts.Inter.Bold}
+                    horizontalAlignment={Enum.TextXAlignment.Left}
+                    verticalAlignment={Enum.TextYAlignment.Top}
+                    size={new UDim2(0.2, 0, 1, 0)}
+                />
+                <Typography
+                    text={props.question.type}
+                    textSize={configs.textSize.md}
+                    font={configs.fonts.Inter.Bold}
+                    size={new UDim2(0.8, 0, 1, 0)}
+                    verticalAlignment={Enum.TextYAlignment.Top}
+                    horizontalAlignment={Enum.TextXAlignment.Right}
+                />
+            </frame>
+
+            <canvasgroup
+                BackgroundTransparency={1}
+                Size={new UDim2(1, 0, 0.7, 0)}
+            >
+                <UICorner radius={configs.rounded.md} />
+                <Stroke
+                    color={configs.colors.black.background}
+                    transparency={0.8}
+                    thickness={3}
+                />
+                <frame
+                    BorderSizePixel={0}
+                    ZIndex={2}
+                    BackgroundColor3={
+                        props.active
+                            ? configs.colors.white.active
+                            : configs.colors.white.background
+                    }
+                    Size={new UDim2(1, 0, 0.4, 0)}
+                >
+                    <Padding left={8} right={8} top={4} bottom={4} />
+                    <Typography
+                        text={truncateText(
+                            props.question.question.size() > 0
+                                ? props.question.question
+                                : "Unnamed question",
+                            25,
+                        )}
+                        textSize={configs.textSize.md}
+                        font={configs.fonts.Inter.Regular}
+                        size={new UDim2(1, 0, 1, 0)}
+                        verticalAlignment={Enum.TextYAlignment.Center}
+                        horizontalAlignment={Enum.TextXAlignment.Center}
+                        truncate={true}
+                    />
+                </frame>
+
+                <imagelabel
+                    BackgroundTransparency={1}
+                    Size={new UDim2(1, 0, 1, 0)}
+                    Image={props.question.coverImage}
+                    ImageColor3={configs.colors.black.background}
+                    ScaleType={Enum.ScaleType.Crop}
+                />
+            </canvasgroup>
+        </textbutton>
     );
 }
 

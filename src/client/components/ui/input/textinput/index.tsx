@@ -204,6 +204,7 @@ export interface QuestionAnswerCardProps {
 
     onAnswerSelectCorrect?: () => void;
     onAnswerDeselectCorrect?: () => void;
+    onTextValid?: (valid: boolean) => void;
 }
 
 export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
@@ -291,6 +292,9 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
 
                         if (textIsValid(text) === false) {
                             setCorrect(false);
+                            props.onTextValid?.(false);
+                        } else {
+                            props.onTextValid?.(true);
                         }
                     }}
                 />
@@ -479,6 +483,9 @@ export function Dropdown(props: DropdownProps) {
             : // if no selected value, use the first option
               getDropdownValue(props.options[0]),
     );
+
+    print(selected);
+
     const [expanded, setExpanded] = useState<boolean>(false);
 
     const [strokeTransparency, setStrokeTransparency] = useBinding(0.9);

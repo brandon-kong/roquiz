@@ -9,6 +9,7 @@ interface ControlDropdownProps {
     title: string;
     options: Array<string | DetailedOption>;
     selected?: string;
+    onSelect?: (selected: string) => void;
 }
 
 function ControlDropdown(props: ControlDropdownProps) {
@@ -31,12 +32,30 @@ function ControlDropdown(props: ControlDropdownProps) {
                 horizontalAlignment={Enum.TextXAlignment.Left}
                 size={new UDim2(1, 0, 0, 40)}
             />
-            <Dropdown options={props.options} selected={props.selected} />
+            <Dropdown
+                options={props.options}
+                selected={props.selected}
+                onSelect={props.onSelect}
+            />
         </frame>
     );
 }
-function QuizControlFrame() {
+
+interface QuizControlFrameProps {
+    onQuestionTypeChange?: (questionType: string) => void;
+    onTimeLimitChange?: (timeLimit: string) => void;
+    onPointsChange?: (points: string) => void;
+    onAnswerTypeChange?: (answerType: string) => void;
+}
+
+function QuizControlFrame(props: QuizControlFrameProps) {
     const controlsScrollRef = React.createRef<ScrollingFrame>();
+
+    const [questionType, setQuestionType] = React.useState("Multiple Choice");
+    const [timeLimit, setTimeLimit] = React.useState("5 seconds");
+    const [points, setPoints] = React.useState("Standard");
+
+    print(questionType);
 
     return (
         <scrollingframe
@@ -86,11 +105,17 @@ function QuizControlFrame() {
             <ControlDropdown
                 title={"Question Type"}
                 options={["Multiple Choice", "True or False", "Short Answer"]}
+                selected={questionType}
+                onSelect={(selected) => {
+                    print(selected);
+                    setQuestionType(selected);
+                    props.onQuestionTypeChange?.(selected);
+                }}
             />
 
             <ControlDropdown
                 title={"Time Limit"}
-                selected="5 seconds"
+                selected={timeLimit}
                 options={[
                     "None",
                     "5 seconds",
@@ -103,11 +128,19 @@ function QuizControlFrame() {
                     "3 minutes",
                     "5 minutes",
                 ]}
+                onSelect={(selected) => {
+                    setTimeLimit(selected);
+                    props.onTimeLimitChange?.(selected);
+                }}
             />
 
             <ControlDropdown
+                onSelect={(selected) => {
+                    setPoints(selected);
+                    props.onPointsChange?.(selected);
+                }}
                 title={"Points"}
-                selected="Standard"
+                selected={points}
                 options={[
                     "Standard",
                     "Double Points",
@@ -115,10 +148,21 @@ function QuizControlFrame() {
                     {
                         value: "All or Nothing",
                         description:
-                            "Users will double their points for the correct answer, but lose everything if any are incorrect.",
+                            "Players lose everything if they answer incorrectly",
                     },
                 ]}
             />
+
+            {questionType === "Multiple Choice" && (
+                <ControlDropdown
+                    title={"Answer Type"}
+                    selected="Single Answer"
+                    options={["Single Answer", "Multiple Answers"]}
+                    onSelect={(selected) => {
+                        props.onAnswerTypeChange?.(selected);
+                    }}
+                />
+            )}
         </scrollingframe>
     );
 }

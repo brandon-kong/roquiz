@@ -15,12 +15,14 @@ import {
     QuestionAnswerCardProps,
     TextInput,
 } from "./input/textinput";
-import Button, { IconButton } from "./input/button";
+import Button, { IconButton, QuestionButton } from "./input/button";
 import { useSpring } from "../hooks/useSpring";
 import { controls } from "../stories/inputs/button.story";
 import ModalBackdrop from "./modal-backdrop";
 import Separator from "./separator";
 import QuizControlFrame from "./input/quiz-control-frame";
+import { Question, QuestionType } from "@src/shared/types/quiz";
+import QuizCreatorQuestionEditor from "./input/quiz-creator-question-editor";
 
 const selectButtons: QuestionAnswerCardProps[] = [
     {
@@ -42,8 +44,21 @@ const selectButtons: QuestionAnswerCardProps[] = [
     },
 ];
 
+function blankQuestion(): Question {
+    const question: Question = {
+        question: "",
+        type: "Multiple Choice",
+        answer: [],
+        points: "Standard",
+        timeLimit: "5 seconds",
+        answerType: "Single",
+        options: [],
+    };
+
+    return question;
+}
+
 function QuizCreator() {
-    const controlsScrollRef = React.createRef<ScrollingFrame>();
     const [controlsExpanded, setControlsExpanded] = useState(false);
 
     const [controlsPosition, setControlsPosition] = useBinding(
@@ -53,6 +68,9 @@ function QuizCreator() {
         controlsPosition,
         configs.spring.default,
     );
+
+    const [currentQuestion, setCurrentQuestion] = useState<number>(0);
+    const [questions, setQuestions] = useState<Question[]>([blankQuestion()]);
 
     useEffect(() => {
         if (controlsExpanded) {
@@ -82,88 +100,70 @@ function QuizCreator() {
                     BackgroundColor3={configs.colors.white.background}
                     Size={new UDim2(0.2, 0, 1, 0)}
                     Position={new UDim2(0, 0, 0, 0)}
-                />
-                <frame
-                    key={"quiz-creator-question-editor"}
-                    BackgroundTransparency={1}
-                    Size={new UDim2(0.8, 0, 1, 0)}
-                    Position={new UDim2(0, 0, 0, 0)}
                 >
                     <UIList
                         fillDirection={Enum.FillDirection.Vertical}
-                        verticalAlignment={Enum.VerticalAlignment.Center}
-                        horizontalAlignment={Enum.HorizontalAlignment.Center}
-                        padding={new UDim(0.025, 0)}
+                        verticalAlignment={Enum.VerticalAlignment.Top}
                     />
-                    <frame
+                    <scrollingframe
+                        ScrollBarThickness={4}
                         BorderSizePixel={0}
-                        BackgroundColor3={configs.colors.black.accent}
-                        Size={new UDim2(0.9, 0, 0.15, 0)}
+                        key={"quiz-creator-question-list"}
+                        ScrollBarImageColor3={configs.colors.white.accent}
+                        BackgroundColor3={configs.colors.white.background}
+                        Size={new UDim2(1, 0, 0.8, 0)}
                         Position={new UDim2(0, 0, 0, 0)}
                     >
-                        <Padding bottom={4} />
-                        <UICorner radius={configs.rounded.md} />
-
-                        <TextInput
-                            placeholder={"Question"}
-                            size={new UDim2(1, 0, 1, 0)}
-                            clearOnFocus={false}
-                            maxLength={100}
-                            borderRadius={configs.rounded.md}
-                        />
-                    </frame>
-
-                    <imagelabel
-                        BackgroundColor3={configs.colors.white.background}
-                        Size={new UDim2(1, 0, 0.4, 0)}
-                        Position={new UDim2(0, 0, 0.2, 0)}
-                        Image={"rbxassetid://6996356193"}
-                    >
-                        <UICorner radius={configs.rounded.md} />
-                        <AspectRatio ratio={1.7} />
-                        <SizeConstraint
-                            max={new Vector2(400, 400)}
-                            min={new Vector2(100, 100)}
-                        />
                         <UIList
                             fillDirection={Enum.FillDirection.Vertical}
-                            verticalAlignment={Enum.VerticalAlignment.Center}
-                            padding={new UDim(0.05, 0)}
+                            verticalAlignment={Enum.VerticalAlignment.Top}
                         />
-                        <IconButton
-                            variant={"softGreen"}
-                            icon={configs.icons.plus}
-                        />
-                        <Typography
-                            size={new UDim2(1, 0, 0.2, 0)}
-                            text={"Add Image"}
-                            font={configs.fonts.Inter.Bold}
-                            textSize={configs.textSize.lg}
-                            color={configs.colors.black.accent}
-                            horizontalAlignment={Enum.TextXAlignment.Center}
-                            verticalAlignment={Enum.TextYAlignment.Top}
-                        />
-                    </imagelabel>
+                        <Padding right={8} />
+
+                        {questions.map((question, index) => (
+                            <QuestionButton
+                                active={currentQuestion === index}
+                                index={index}
+                                question={question}
+                                onClick={() => {
+                                    setCurrentQuestion(index);
+                                }}
+                            />
+                        ))}
+                    </scrollingframe>
 
                     <frame
                         BackgroundTransparency={1}
-                        Size={new UDim2(0.9, 0, 0.35, 0)}
-                        Position={new UDim2(0, 0, 0, 0)}
+                        Size={new UDim2(1, 0, 0.2, 0)}
                     >
-                        <UIGrid
-                            fillDirection={Enum.FillDirection.Horizontal}
-                            cellSize={new UDim2(0.5, -8, 0.5, -8)}
-                            cellPadding={new UDim2(0, 8, 0, 8)}
+                        <UIList
+                            fillDirection={Enum.FillDirection.Vertical}
+                            verticalAlignment={Enum.VerticalAlignment.Top}
+                            padding={new UDim(0.025, 0)}
                         />
+                        <Padding left={8} right={8} />
 
-                        {selectButtons.map((button) => (
-                            <QuestionAnswerCard
-                                size={new UDim2(1, 0, 1, 0)}
-                                {...button}
-                            />
-                        ))}
+                        <Button
+                            variant={"accent"}
+                            text={"Add Question"}
+                            size={new UDim2(1, 0, 0.45, 0)}
+                        />
+                        <Button
+                            variant={"white"}
+                            text={"Edit Quiz"}
+                            size={new UDim2(1, 0, 0.45, 0)}
+                        />
                     </frame>
                 </frame>
+
+                <QuizCreatorQuestionEditor
+                    onQuestionChange={(question) => {
+                        setQuestions((prev) => {
+                            prev[currentQuestion].question = question;
+                            return [...prev];
+                        });
+                    }}
+                />
             </frame>
 
             <ModalBackdrop
@@ -184,7 +184,16 @@ function QuizCreator() {
                     Position={controlsExpandedBinding}
                     AnchorPoint={new Vector2(0, 0)}
                 >
-                    <QuizControlFrame />
+                    <QuizControlFrame
+                        onQuestionTypeChange={(type) => {
+                            print(type);
+                            setQuestions((prev) => {
+                                prev[currentQuestion].type =
+                                    type as QuestionType;
+                                return [...prev];
+                            });
+                        }}
+                    />
 
                     <imagebutton
                         AutoButtonColor={false}
