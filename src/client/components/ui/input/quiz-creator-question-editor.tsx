@@ -15,7 +15,7 @@ import {
     TextInput,
 } from "./textinput";
 import { IconButton } from "./button";
-import { Question } from "@src/shared/types/quiz";
+import { MultipleChoiceQuestion, Question } from "@src/shared/types/quiz";
 
 const selectButtons: QuestionAnswerCardProps[] = [
     {
@@ -42,7 +42,7 @@ interface QuizCreatorQuestionEditorProps {
     onQuestionChange: (question: string) => void;
     onImageChange?: (image: string) => void;
     onOptionChange?: (option: string, index: number) => void;
-    onAnswerChange?: (answer: number[]) => void;
+    onAnswerChange?: (index: number, value: boolean) => void;
 }
 
 function QuizCreatorQuestionEditor(props: QuizCreatorQuestionEditorProps) {
@@ -119,16 +119,28 @@ function QuizCreatorQuestionEditor(props: QuizCreatorQuestionEditorProps) {
                     cellPadding={new UDim2(0, 8, 0, 8)}
                 />
 
-                {selectButtons.map((button, index) => (
-                    <QuestionAnswerCard
-                        key={index}
-                        onAnswerSelectCorrect={() => {
-                            props.onAnswerChange?.([index]);
-                        }}
-                        size={new UDim2(1, 0, 1, 0)}
-                        {...button}
-                    />
-                ))}
+                {props.question.type === "Multiple Choice" &&
+                    selectButtons.map((button, index) => (
+                        <QuestionAnswerCard
+                            correct={
+                                (props.question as MultipleChoiceQuestion)
+                                    .answer[index] === true
+                            }
+                            text={
+                                (props.question as MultipleChoiceQuestion)
+                                    .options[index]
+                            }
+                            onAnswerChange={(value) => {
+                                props.onAnswerChange?.(index, value);
+                            }}
+                            key={index}
+                            onOptionChange={(option) => {
+                                props.onOptionChange?.(option, index);
+                            }}
+                            size={new UDim2(1, 0, 1, 0)}
+                            {...button}
+                        />
+                    ))}
             </frame>
         </frame>
     );

@@ -1,4 +1,4 @@
-export type QuestionType = "Multiple Choice" | "True/False" | "Short Answer";
+export type QuestionType = "Multiple Choice" | "True or False" | "Short Answer";
 export type TimeLimit =
     | "None"
     | "5 seconds"
@@ -17,28 +17,36 @@ export type Points =
     | "All or Nothing";
 export type AnswerType = "Single" | "Multiple";
 
-export type Question = {
-    coverImage?: string;
+export type BaseQuestion = {
     question: string;
-    type: QuestionType;
     points: Points;
     timeLimit: TimeLimit;
-} & (
-    | {
-          type: "Multiple Choice";
-          answerType: AnswerType;
-          options: string[];
-          answer: number[];
-      }
-    | {
-          type: "True/False";
-          answer: boolean;
-      }
-    | {
-          type: "Short Answer";
-          answer: string;
-      }
-);
+    coverImage?: string;
+};
+
+export type MultipleChoiceQuestion = BaseQuestion & {
+    type: "Multiple Choice";
+    answerType: AnswerType;
+    options: string[];
+    answer: {
+        [key: number]: boolean;
+    };
+};
+
+export type TrueFalseQuestion = BaseQuestion & {
+    type: "True or False";
+    answer: boolean;
+};
+
+export type ShortAnswerQuestion = BaseQuestion & {
+    type: "Short Answer";
+    answer: string;
+};
+
+export type Question =
+    | MultipleChoiceQuestion
+    | TrueFalseQuestion
+    | ShortAnswerQuestion;
 
 export type Quiz = {
     questions: Question[];

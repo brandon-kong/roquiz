@@ -197,19 +197,19 @@ export interface QuestionAnswerCardProps {
     shape?: string;
     size?: UDim2;
     text?: string;
+    correct?: boolean;
     setText?: (text: string) => void;
     color?: ColorToken;
 
     shapeScale?: number;
 
-    onAnswerSelectCorrect?: () => void;
-    onAnswerDeselectCorrect?: () => void;
+    onOptionChange?: (option: string) => void;
+    onAnswerChange?: (value: boolean) => void;
     onTextValid?: (valid: boolean) => void;
 }
 
 export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
     const [text, setText] = useState<string>(props.text ?? "");
-    const [correct, setCorrect] = useState<boolean>(false);
 
     const validText = textIsValid(text);
 
@@ -290,8 +290,14 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
                             props.setText(text);
                         }
 
+                        if (props.onOptionChange) {
+                            props.onOptionChange(text);
+                        }
+
                         if (textIsValid(text) === false) {
-                            setCorrect(false);
+                            if (props.onAnswerChange) {
+                                props.onAnswerChange(false);
+                            }
                             props.onTextValid?.(false);
                         } else {
                             props.onTextValid?.(true);
@@ -307,19 +313,9 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
                     <ToggleButton
                         color={props.color}
                         visible={validText}
-                        active={correct}
+                        active={props.correct}
                         onToggle={(active) => {
-                            if (active) {
-                                setCorrect(true);
-                                if (props.onAnswerSelectCorrect) {
-                                    props.onAnswerSelectCorrect();
-                                }
-                            } else {
-                                setCorrect(false);
-                                if (props.onAnswerDeselectCorrect) {
-                                    props.onAnswerDeselectCorrect();
-                                }
-                            }
+                            props.onAnswerChange?.(active);
                         }}
                     />
                 </frame>

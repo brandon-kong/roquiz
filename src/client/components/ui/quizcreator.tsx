@@ -22,6 +22,7 @@ import ModalBackdrop from "./modal-backdrop";
 import Separator from "./separator";
 import QuizControlFrame from "./input/quiz-control-frame";
 import {
+    MultipleChoiceQuestion,
     Points,
     Question,
     QuestionType,
@@ -29,35 +30,37 @@ import {
 } from "@src/shared/types/quiz";
 import QuizCreatorQuestionEditor from "./input/quiz-creator-question-editor";
 
-const selectButtons: QuestionAnswerCardProps[] = [
-    {
-        color: "gameRed",
-        shape: configs.gameShapes.circle,
-    },
-    {
-        color: "gameBlue",
-        shape: configs.gameShapes.diamond,
-    },
-    {
-        color: "gameYellow",
-        shape: configs.gameShapes.triangle,
-    },
-    {
-        color: "gameGreen",
-        shape: configs.gameShapes.square,
-        shapeScale: 0.8,
-    },
-];
+function getQuestionAnswerType(question: Question) {
+    if (question.type === "Multiple Choice") {
+        question.options = ["", "", "", ""];
+        question.answer = {
+            0: false,
+            1: false,
+            2: false,
+            3: false,
+        };
+    } else if (question.type === "True or False") {
+        question.answer = false;
+    } else if (question.type === "Short Answer") {
+        question.answer = "";
+    }
+    return question;
+}
 
 function blankQuestion(): Question {
     const question: Question = {
         question: "",
         type: "Multiple Choice",
-        answer: [],
+        answer: {
+            0: false,
+            1: false,
+            2: false,
+            3: false,
+        },
         points: "Standard",
         timeLimit: "5 seconds",
         answerType: "Single",
-        options: [],
+        options: ["", "", "", ""],
     };
 
     return question;
@@ -151,7 +154,12 @@ function QuizCreator() {
                         <Button
                             onClick={() => {
                                 setQuestions((prev) => {
-                                    return [...prev, blankQuestion()];
+                                    const newArr = [...prev, blankQuestion()];
+
+                                    // Ensure currentQuestion is within bounds
+                                    setCurrentQuestion(newArr.size() - 1);
+
+                                    return newArr;
                                 });
                             }}
                             variant={"accent"}
@@ -171,6 +179,33 @@ function QuizCreator() {
                     onQuestionChange={(question) => {
                         setQuestions((prev) => {
                             prev[currentQuestion].question = question;
+                            return [...prev];
+                        });
+                    }}
+                    onAnswerChange={(index, value) => {
+                        setQuestions((prev) => {
+                            const question = prev[currentQuestion];
+                            if (question.type === "Multiple Choice") {
+                                question.answer[index] = value;
+                            } else if (question.type === "True or False") {
+                                question.answer = value;
+                            }
+                            return [...prev];
+                        });
+                    }}
+                    onOptionChange={(option, index) => {
+                        setQuestions((prev) => {
+                            const question = prev[
+                                currentQuestion
+                            ] as Question & {
+                                type: "Multiple Choice";
+                            };
+
+                            if (question.options[index] === undefined) {
+                                return prev;
+                            }
+
+                            question.options[index] = option;
                             return [...prev];
                         });
                     }}
@@ -204,6 +239,15 @@ function QuizCreator() {
                                 }
                                 prev[currentQuestion].type =
                                     questionType as QuestionType;
+
+                                // Reset answer type
+                                const question = getQuestionAnswerType(
+                                    prev[currentQuestion],
+                                );
+
+                                prev[currentQuestion] = question;
+                                print(question);
+
                                 return [...prev];
                             });
                         }}
@@ -236,9 +280,17 @@ function QuizCreator() {
                                 newQuestions.remove(currentQuestion);
 
                                 // Ensure currentQuestion is within bounds
-                                setCurrentQuestion((prevCurrent) =>
-                                    math.max(prevCurrent - 1, 0),
-                                );
+                                if (newQuestions.size() > 1) {
+                                    setCurrentQuestion((prevCurrent) =>
+                                        math.clamp(
+                                            prevCurrent,
+                                            0,
+                                            newQuestions.size() - 1,
+                                        ),
+                                    );
+                                } else {
+                                    setCurrentQuestion(0);
+                                }
 
                                 return newQuestions;
                             });
@@ -248,6 +300,9 @@ function QuizCreator() {
                                 prev.insert(currentQuestion + 1, {
                                     ...prev[currentQuestion],
                                 });
+
+                                // Ensure currentQuestion is within bounds
+                                setCurrentQuestion(currentQuestion + 1);
                                 return [...prev];
                             });
                         }}

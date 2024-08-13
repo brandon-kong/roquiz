@@ -59,8 +59,6 @@ function QuizControlFrame(props: QuizControlFrameProps) {
     const [timeLimit, setTimeLimit] = React.useState("5 seconds");
     const [points, setPoints] = React.useState("Standard");
 
-    print(questionType);
-
     return (
         <scrollingframe
             ref={controlsScrollRef}
@@ -113,7 +111,6 @@ function QuizControlFrame(props: QuizControlFrameProps) {
                 options={["Multiple Choice", "True or False", "Short Answer"]}
                 selected={props.question.type}
                 onSelect={(selected) => {
-                    print(selected);
                     setQuestionType(selected);
                     props.onQuestionTypeChange?.(selected);
                 }}
