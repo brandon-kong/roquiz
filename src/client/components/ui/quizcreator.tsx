@@ -21,7 +21,12 @@ import { controls } from "../stories/inputs/button.story";
 import ModalBackdrop from "./modal-backdrop";
 import Separator from "./separator";
 import QuizControlFrame from "./input/quiz-control-frame";
-import { Question, QuestionType } from "@src/shared/types/quiz";
+import {
+    Points,
+    Question,
+    QuestionType,
+    TimeLimit,
+} from "@src/shared/types/quiz";
 import QuizCreatorQuestionEditor from "./input/quiz-creator-question-editor";
 
 const selectButtons: QuestionAnswerCardProps[] = [
@@ -144,6 +149,11 @@ function QuizCreator() {
                         <Padding left={8} right={8} />
 
                         <Button
+                            onClick={() => {
+                                setQuestions((prev) => {
+                                    return [...prev, blankQuestion()];
+                                });
+                            }}
                             variant={"accent"}
                             text={"Add Question"}
                             size={new UDim2(1, 0, 0.45, 0)}
@@ -157,6 +167,7 @@ function QuizCreator() {
                 </frame>
 
                 <QuizCreatorQuestionEditor
+                    question={questions[currentQuestion ?? 0]}
                     onQuestionChange={(question) => {
                         setQuestions((prev) => {
                             prev[currentQuestion].question = question;
@@ -185,11 +196,58 @@ function QuizCreator() {
                     AnchorPoint={new Vector2(0, 0)}
                 >
                     <QuizControlFrame
-                        onQuestionTypeChange={(type) => {
-                            print(type);
+                        question={questions[currentQuestion ?? 0]}
+                        onQuestionTypeChange={(questionType) => {
                             setQuestions((prev) => {
+                                if (prev[currentQuestion] === undefined) {
+                                    return prev;
+                                }
                                 prev[currentQuestion].type =
-                                    type as QuestionType;
+                                    questionType as QuestionType;
+                                return [...prev];
+                            });
+                        }}
+                        onPointsChange={(points) => {
+                            setQuestions((prev) => {
+                                if (prev[currentQuestion] === undefined) {
+                                    return prev;
+                                }
+                                prev[currentQuestion].points = points as Points;
+                                return [...prev];
+                            });
+                        }}
+                        onTimeLimitChange={(timeLimit) => {
+                            setQuestions((prev) => {
+                                if (prev[currentQuestion] === undefined) {
+                                    return prev;
+                                }
+                                prev[currentQuestion].timeLimit =
+                                    timeLimit as TimeLimit;
+                                return [...prev];
+                            });
+                        }}
+                        onDelete={() => {
+                            setQuestions((prev) => {
+                                if (prev.size() === 1) {
+                                    // Don't delete the only question
+                                    return prev;
+                                }
+                                const newQuestions = [...prev];
+                                newQuestions.remove(currentQuestion);
+
+                                // Ensure currentQuestion is within bounds
+                                setCurrentQuestion((prevCurrent) =>
+                                    math.max(prevCurrent - 1, 0),
+                                );
+
+                                return newQuestions;
+                            });
+                        }}
+                        onDuplicate={() => {
+                            setQuestions((prev) => {
+                                prev.insert(currentQuestion + 1, {
+                                    ...prev[currentQuestion],
+                                });
                                 return [...prev];
                             });
                         }}

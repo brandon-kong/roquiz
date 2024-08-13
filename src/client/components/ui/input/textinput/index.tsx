@@ -329,9 +329,9 @@ export function QuestionAnswerCard(props: QuestionAnswerCardProps) {
 }
 
 function DetailedDropdownItem(props: {
-    text: string;
+    text?: string;
     description: string;
-    onSelect: () => void;
+    onSelect: (value: string) => void;
 }) {
     const [hovered, setHovered] = useState(false);
 
@@ -363,7 +363,7 @@ function DetailedDropdownItem(props: {
             AutomaticSize={Enum.AutomaticSize.Y}
             Event={{
                 Activated: () => {
-                    props.onSelect();
+                    props.onSelect(props.text ?? "");
                 },
                 MouseEnter: () => {
                     setHovered(true);
@@ -396,14 +396,17 @@ function DetailedDropdownItem(props: {
                 transparency={0.5}
                 textSize={configs.textSize.md}
                 font={configs.fonts.Inter.Medium}
-                horizontalAlignment={Enum.TextXAlignment.Left}
+                horizontalAlignment={Enum.TextXAlignment.Center}
                 automaticSize={Enum.AutomaticSize.Y}
             />
         </textbutton>
     );
 }
 
-function DropdownItem(props: { text: string; onSelect: () => void }) {
+function DropdownItem(props: {
+    text?: string;
+    onSelect: (value: string) => void;
+}) {
     const [hovered, setHovered] = useState(false);
 
     const [backgroundColor, setBackgroundColor] = useBinding(
@@ -436,7 +439,7 @@ function DropdownItem(props: { text: string; onSelect: () => void }) {
             BackgroundTransparency={0}
             Event={{
                 Activated: () => {
-                    props.onSelect();
+                    props.onSelect(props.text ?? "");
                 },
                 MouseEnter: () => {
                     setHovered(true);
@@ -464,7 +467,10 @@ interface DropdownProps {
     size?: UDim2;
 }
 
-function getDropdownValue(option: string | DetailedOption) {
+function getDropdownValue(option: string | DetailedOption | undefined) {
+    if (option === undefined) {
+        return undefined;
+    }
     if (typeIs(option, "table")) {
         return (option as DetailedOption).value;
     } else {
@@ -473,19 +479,6 @@ function getDropdownValue(option: string | DetailedOption) {
 }
 
 export function Dropdown(props: DropdownProps) {
-    const [selected, setSelected] = useState<string>(
-        props.selected !== undefined
-            ? // find the option with the same value as the selected value
-
-              (props.options.find((option) => {
-                  return getDropdownValue(option) === props.selected;
-              }) as string)
-            : // if no selected value, use the first option
-              getDropdownValue(props.options[0]),
-    );
-
-    print(selected);
-
     const [expanded, setExpanded] = useState<boolean>(false);
 
     const [strokeTransparency, setStrokeTransparency] = useBinding(0.9);
@@ -555,7 +548,11 @@ export function Dropdown(props: DropdownProps) {
                 </imagelabel>
 
                 <Typography
-                    text={selected}
+                    text={
+                        props.selected !== undefined
+                            ? getDropdownValue(props.selected)
+                            : getDropdownValue(props.options[0])
+                    }
                     size={new UDim2(0.8, 0, 1, 0)}
                     color={configs.colors.black.accent}
                     textSize={configs.textSize.lg}
@@ -585,8 +582,7 @@ export function Dropdown(props: DropdownProps) {
                                 description={
                                     (option as DetailedOption).description
                                 }
-                                onSelect={() => {
-                                    setSelected(value);
+                                onSelect={(value) => {
                                     if (props.onSelect) {
                                         props.onSelect(value);
                                     }
@@ -599,8 +595,7 @@ export function Dropdown(props: DropdownProps) {
                     return (
                         <DropdownItem
                             text={value}
-                            onSelect={() => {
-                                setSelected(value);
+                            onSelect={(value) => {
                                 if (props.onSelect) {
                                     props.onSelect(value);
                                 }

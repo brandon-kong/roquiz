@@ -4,6 +4,7 @@ import { DetailedOption, Dropdown } from "./textinput";
 import configs from "../configs";
 import Button from "./button";
 import Separator from "../separator";
+import { Question } from "@src/shared/types/quiz";
 
 interface ControlDropdownProps {
     title: string;
@@ -42,10 +43,13 @@ function ControlDropdown(props: ControlDropdownProps) {
 }
 
 interface QuizControlFrameProps {
-    onQuestionTypeChange?: (questionType: string) => void;
-    onTimeLimitChange?: (timeLimit: string) => void;
-    onPointsChange?: (points: string) => void;
-    onAnswerTypeChange?: (answerType: string) => void;
+    question: Question;
+    onQuestionTypeChange: (questionType: string) => void;
+    onTimeLimitChange: (timeLimit: string) => void;
+    onPointsChange: (points: string) => void;
+
+    onDelete: () => void;
+    onDuplicate: () => void;
 }
 
 function QuizControlFrame(props: QuizControlFrameProps) {
@@ -88,11 +92,13 @@ function QuizControlFrame(props: QuizControlFrameProps) {
                 bottom={8}
             />
             <Button
+                onClick={props.onDelete}
                 variant={"destructive"}
                 text={"Delete"}
                 size={new UDim2(1, 0, 0, 40)}
             />
             <Button
+                onClick={props.onDuplicate}
                 variant={"secondary"}
                 text={"Duplicate"}
                 size={new UDim2(1, 0, 0, 40)}
@@ -105,7 +111,7 @@ function QuizControlFrame(props: QuizControlFrameProps) {
             <ControlDropdown
                 title={"Question Type"}
                 options={["Multiple Choice", "True or False", "Short Answer"]}
-                selected={questionType}
+                selected={props.question.type}
                 onSelect={(selected) => {
                     print(selected);
                     setQuestionType(selected);
@@ -115,7 +121,7 @@ function QuizControlFrame(props: QuizControlFrameProps) {
 
             <ControlDropdown
                 title={"Time Limit"}
-                selected={timeLimit}
+                selected={props.question.timeLimit}
                 options={[
                     "None",
                     "5 seconds",
@@ -140,7 +146,7 @@ function QuizControlFrame(props: QuizControlFrameProps) {
                     props.onPointsChange?.(selected);
                 }}
                 title={"Points"}
-                selected={points}
+                selected={props.question.points}
                 options={[
                     "Standard",
                     "Double Points",
@@ -152,17 +158,6 @@ function QuizControlFrame(props: QuizControlFrameProps) {
                     },
                 ]}
             />
-
-            {questionType === "Multiple Choice" && (
-                <ControlDropdown
-                    title={"Answer Type"}
-                    selected="Single Answer"
-                    options={["Single Answer", "Multiple Answers"]}
-                    onSelect={(selected) => {
-                        props.onAnswerTypeChange?.(selected);
-                    }}
-                />
-            )}
         </scrollingframe>
     );
 }

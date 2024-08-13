@@ -15,6 +15,7 @@ import {
     TextInput,
 } from "./textinput";
 import { IconButton } from "./button";
+import { Question } from "@src/shared/types/quiz";
 
 const selectButtons: QuestionAnswerCardProps[] = [
     {
@@ -37,6 +38,7 @@ const selectButtons: QuestionAnswerCardProps[] = [
 ];
 
 interface QuizCreatorQuestionEditorProps {
+    question: Question;
     onQuestionChange: (question: string) => void;
     onImageChange?: (image: string) => void;
     onOptionChange?: (option: string, index: number) => void;
@@ -67,6 +69,7 @@ function QuizCreatorQuestionEditor(props: QuizCreatorQuestionEditorProps) {
                 <UICorner radius={configs.rounded.md} />
 
                 <TextInput
+                    text={props.question.question}
                     placeholder={"Question"}
                     size={new UDim2(1, 0, 1, 0)}
                     clearOnFocus={false}
@@ -80,7 +83,7 @@ function QuizCreatorQuestionEditor(props: QuizCreatorQuestionEditorProps) {
                 BackgroundColor3={configs.colors.white.background}
                 Size={new UDim2(1, 0, 0.4, 0)}
                 Position={new UDim2(0, 0, 0.2, 0)}
-                Image={"rbxassetid://6996356193"}
+                Image={props.question.coverImage ?? "rbxassetid://6996356193"}
             >
                 <UICorner radius={configs.rounded.md} />
                 <AspectRatio ratio={1.7} />
