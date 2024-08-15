@@ -18,6 +18,7 @@ import { IconButton } from "./button";
 import {
     MultipleChoiceQuestion,
     Question,
+    ShortAnswerQuestion,
     TrueFalseQuestion,
 } from "@src/shared/types/quiz";
 
@@ -49,6 +50,7 @@ interface QuizCreatorQuestionEditorProps {
     onAnswerChange?: (index: number, value: boolean) => void;
 
     onTrueFalseAnswerChange: (value: boolean) => void;
+    onShortAnswerAnswerChange: (value: string) => void;
 }
 
 function MultipleChoiceQuestionEditor(props: QuizCreatorQuestionEditorProps) {
@@ -137,7 +139,12 @@ function TrueFalseQuestionEditor(props: TrueFalseQuestionEditorProps) {
     );
 }
 
-function ShortAnswerQuestionEditor(props: QuizCreatorQuestionEditorProps) {
+interface ShortAnswerQuestionEditorProps {
+    question: ShortAnswerQuestion;
+    onAnswerChange?: (value: string) => void;
+}
+
+function ShortAnswerQuestionEditor(props: ShortAnswerQuestionEditorProps) {
     return (
         <>
             <TextInput
@@ -230,6 +237,12 @@ function QuizCreatorQuestionEditor(props: QuizCreatorQuestionEditorProps) {
                         <TrueFalseQuestionEditor
                             question={props.question}
                             onAnswerChange={props.onTrueFalseAnswerChange}
+                        />
+                    )) ||
+                    (props.question.type === "Short Answer" && (
+                        <ShortAnswerQuestionEditor
+                            question={props.question}
+                            onAnswerChange={props.onShortAnswerAnswerChange}
                         />
                     ))}
             </frame>

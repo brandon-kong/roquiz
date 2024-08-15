@@ -189,6 +189,12 @@ function QuizCreator() {
                             return [...prev];
                         });
                     }}
+                    onShortAnswerAnswerChange={(value) => {
+                        setQuestions((prev) => {
+                            prev[currentQuestion].answer = value;
+                            return [...prev];
+                        });
+                    }}
                     onQuestionChange={(question) => {
                         setQuestions((prev) => {
                             prev[currentQuestion].question = question;
@@ -250,6 +256,15 @@ function QuizCreator() {
                                 if (prev[currentQuestion] === undefined) {
                                     return prev;
                                 }
+
+                                // Prevents re-rendering if the question type is the same
+                                // clearing the existing quesiton data
+                                if (
+                                    prev[currentQuestion].type === questionType
+                                ) {
+                                    return prev;
+                                }
+
                                 prev[currentQuestion].type =
                                     questionType as QuestionType;
 
@@ -259,7 +274,6 @@ function QuizCreator() {
                                 );
 
                                 prev[currentQuestion] = question;
-                                print(question);
 
                                 return [...prev];
                             });
